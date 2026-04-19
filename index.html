@@ -1,1601 +1,1421 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="AmonsPath - Ultra Archive Music Discovery Platform">
-    <meta name="theme-color" content="#ec4899">
-    <title>AmonsPath | Ultra Archive v2.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>AmonsPath OS | Kernel v15.0</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,400;1,700;1,900&family=JetBrains+Mono:wght@300&display=swap" rel="stylesheet">
-
-    <style id="master-logic-styles">
-        :root { 
-            --accent: #ec4899; 
-            --accent-soft: rgba(236, 72, 153, 0.08); 
-            --bg: #ffffff;
-            --surface: #f9f9f9;
-            --text-main: #121212;
-            --text-muted: #8e8e93;
-            --glass: rgba(255, 255, 255, 0.85);
-            --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,400;1,700;1,900&family=JetBrains+Mono:wght@300&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Konfigurasi CSS dari index.css & Profile.tsx */
+        :root {
+            --accent-color: #ec4899;
+            --bg-color: #ffffff;
+            --text-color: #111111;
+            --font-sans: 'Inter', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --safe-area-inset-bottom: env(safe-area-inset-bottom);
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg: #0f0f0f;
-                --surface: #1a1a1a;
-                --text-main: #f5f5f5;
-                --text-muted: #a0a0a0;
-                --glass: rgba(20, 20, 20, 0.85);
-            }
+        .dark {
+            --bg-color: #0f0f0f;
+            --text-color: #ffffff;
         }
 
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            scrollbar-width: thin;
-            scrollbar-color: var(--accent-soft) var(--bg);
-        }
-        *::-webkit-scrollbar { width: 6px; height: 6px; }
-        *::-webkit-scrollbar-track { background: var(--bg); }
-        *::-webkit-scrollbar-thumb { background: var(--accent-soft); border-radius: 3px; }
-        *::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-
-        html {
-            scroll-behavior: smooth;
+        .theme-black {
+            --accent-color: #ffffff;
+            --bg-color: #000000;
+            --text-color: #ffffff;
         }
 
-        body { 
-            background-color: var(--bg); 
-            color: var(--text-main); 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
-            line-height: 1.6;
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+            outline: none !important;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-sans);
+            transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s;
+            margin: 0;
             overflow-x: hidden;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .font-serif-italic { font-family: 'Playfair Display', serif; font-style: italic; }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
-
-        h1, h2, h3, h4, h5, h6 {
-            font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: -0.01em;
-        }
-
-        .skeleton {
-            background: linear-gradient(90deg, var(--surface) 25%, #f0f0f0 50%, var(--surface) 75%);
-            background-size: 200% 100%;
-            animation: skeleton-loading 2s infinite ease-in-out;
-            border-radius: 12px;
-        }
-        @keyframes skeleton-loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        .main-container { 
-            max-width: 600px; 
-            margin: 0 auto; 
-            min-height: 100vh; 
-            background-color: var(--bg);
-        }
+        /* Typography & Utility Classes */
+        .font-serif-italic { font-family: var(--font-serif); font-style: italic; }
+        .font-mono { font-family: var(--font-mono); }
         
-        .glass-nav {
-            position: sticky; 
-            top: 0; 
-            z-index: 500;
-            background: var(--glass);
+        .shadow-huge {
+            box-shadow: 0 30px 60px -12px rgba(0,0,0,0.25);
+        }
+
+        .archive-node {
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 3rem;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .dark .archive-node { border-color: rgba(255,255,255,0.05); }
+
+        /* Navigation & Layers */
+        .layer {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-color);
+            z-index: 100;
+            overflow-y: auto;
+            display: none;
+            padding-bottom: 120px;
+        }
+
+        .layer.active { display: block; animation: layerSlide 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        @keyframes layerSlide {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Chat Wallpaper System (from Chat.tsx) */
+        .chat-container {
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Music Player Animation */
+        .playing-active {
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(236, 72, 153, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 0px; }
+
+        /* Navbar Blur */
+        .nav-blur {
+            background: rgba(var(--bg-rgb), 0.85);
             backdrop-filter: blur(25px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            padding: 20px 24px;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
+            -webkit-backdrop-filter: blur(25px);
         }
-
-        .post-entry {
-            background: var(--surface);
-            margin: 16px 20px 32px 20px;
-            border-radius: 32px;
-            padding: 24px;
-            border: 1px solid rgba(0,0,0,0.04);
-            box-shadow: var(--shadow-md);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: fadeInUp 0.8s ease backwards;
-            cursor: pointer;
-            display: block;
-            position: relative;
-        }
-        .post-entry:hover { 
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-        }
-        .post-entry:active { 
-            transform: scale(0.97);
-            box-shadow: var(--shadow-md);
-        }
-
-        .post-delete-btn {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            font-size: 18px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-        .post-entry:hover .post-delete-btn {
-            opacity: 1;
-        }
-        .post-delete-btn:hover {
-            background: #dc2626;
-            transform: scale(1.1);
-        }
-
-        .album-art-container {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 1/1;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.12);
-            margin-bottom: 20px;
-            background: var(--surface);
-        }
-        .album-art-container img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            will-change: transform;
-        }
-        .post-entry:hover .album-art-container img { 
-            transform: scale(1.08); 
-        }
-
-        .viz-container {
-            display: flex; 
-            gap: 3px; 
-            align-items: flex-end; 
-            height: 20px;
-        }
-        .viz-bar { 
-            width: 3px; 
-            background: var(--accent); 
-            border-radius: 10px;
-            transform-origin: bottom;
-        }
-        .viz-anim { 
-            animation: viz-height 0.8s ease-in-out infinite alternate; 
-        }
-        @keyframes viz-height { 
-            0% { height: 4px; } 
-            100% { height: 20px; } 
-        }
-
-        .layer {
-            position: fixed; 
-            inset: 0; 
-            z-index: 1000;
-            background: var(--bg);
-            display: none; 
-            flex-direction: column;
-            animation: slideInUp 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-        @keyframes slideInUp { 
-            from { 
-                transform: translateY(100%); 
-                opacity: 0;
-            } 
-            to { 
-                transform: translateY(0); 
-                opacity: 1;
-            } 
-        }
-        @keyframes fadeInUp { 
-            from { 
-                opacity: 0; 
-                transform: translateY(30px); 
-            } 
-            to { 
-                opacity: 1; 
-                transform: translateY(0); 
-            } 
-        }
-
-        #toast-container {
-            position: fixed; 
-            top: 40px; 
-            left: 50%; 
-            transform: translateX(-50%);
-            z-index: 9999; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px;
-            pointer-events: none;
-        }
-        .toast {
-            background: #121212; 
-            color: white; 
-            padding: 12px 24px;
-            border-radius: 50px; 
-            font-size: 11px; 
-            font-weight: 700;
-            text-transform: uppercase; 
-            letter-spacing: 1px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: toastIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            pointer-events: all;
-            backdrop-filter: blur(10px);
-        }
-        .toast.success { background: #10b981; }
-        .toast.error { background: #ef4444; }
-        .toast.warning { background: #f59e0b; }
-        .toast.info { background: #3b82f6; }
-        @keyframes toastIn { 
-            from { 
-                opacity: 0; 
-                transform: translateY(-20px) scale(0.9); 
-            } 
-            to { 
-                opacity: 1; 
-                transform: translateY(0) scale(1); 
-            } 
-        }
-
-        .btn-premium {
-            background: var(--accent); 
-            color: white;
-            padding: 14px 24px; 
-            border-radius: 20px;
-            font-weight: 800; 
-            font-size: 10px; 
-            text-transform: uppercase; 
-            letter-spacing: 0.2em;
-            width: 100%; 
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 15px 35px rgba(236, 72, 153, 0.2);
-            border: none;
-            cursor: pointer;
-            user-select: none;
-            touch-action: manipulation;
-            min-height: 44px;
-        }
-        .btn-premium:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 20px 40px rgba(236, 72, 153, 0.3);
-        }
-        .btn-premium:active { 
-            transform: scale(0.95); 
-            opacity: 0.9;
-        }
-        .btn-premium:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--text-main);
-            padding: 14px 24px; 
-            border-radius: 20px;
-            font-weight: 800; 
-            font-size: 10px; 
-            text-transform: uppercase; 
-            letter-spacing: 0.2em;
-            width: 100%; 
-            transition: all 0.3s ease;
-            border: 2px solid var(--accent);
-            cursor: pointer;
-            user-select: none;
-            touch-action: manipulation;
-            min-height: 44px;
-        }
-        .btn-secondary:hover { 
-            background: var(--accent-soft);
-        }
-
-        .input-premium {
-            width: 100%; 
-            background: var(--surface); 
-            border: 2px solid transparent;
-            padding: 14px 20px; 
-            border-radius: 20px; 
-            font-size: 14px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            outline: none;
-            color: var(--text-main);
-            min-height: 44px;
-        }
-        .input-premium::placeholder {
-            color: var(--text-muted);
-        }
-        .input-premium:focus { 
-            border-color: var(--accent); 
-            background: var(--bg); 
-            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
-        }
-
-        #search-overlay {
-            max-height: 0; 
-            overflow: hidden; 
-            opacity: 0;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        #search-overlay.open { 
-            max-height: 120px; 
-            opacity: 1; 
-            padding: 12px 20px 20px 20px; 
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .profile-header-premium {
-            display: flex; 
-            gap: 30px; 
-            padding: 40px 24px;
-            background: linear-gradient(to bottom, var(--accent-soft) 0%, transparent 100%);
-            align-items: flex-start;
-        }
-        .profile-pfp-box {
-            width: 140px; 
-            height: 140px; 
-            flex-shrink: 0;
-            border-radius: 28px; 
-            overflow: hidden;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
-            aspect-ratio: 1;
-            background: var(--surface);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-        }
-        .profile-pfp-box img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid var(--accent-soft);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .search-user-text {
-            font-style: normal !important;
-        }
-
-        .icon-small {
-            font-size: 0.875rem;
-            width: 24px;
-            height: 24px;
-            padding: 6px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .icon-large {
-            width: 56px;
-            height: 56px;
-            font-size: 1.5rem;
-            border: none;
-            background: black;
-            color: white;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-            transition: all 0.3s ease;
-        }
-        .icon-large:hover {
-            transform: scale(1.1);
-        }
-        .icon-large:active {
-            transform: scale(0.95);
-        }
-
-        .profile-editable-content {
-            pointer-events: none;
-            opacity: 0.6;
-        }
-
-        .profile-editable-content.enabled {
-            pointer-events: auto;
-            opacity: 1;
-        }
-
-        .mine-archive-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-            padding: 16px;
-        }
-
-        .error-loading-post {
-            background-color: #fee2e2;
-            color: #991b1b;
-            padding: 16px;
-            border-radius: 12px;
-            text-align: center;
-            margin: 16px 20px;
-        }
-
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            z-index: 1999;
-            animation: fadeIn 0.3s ease;
-        }
-        .modal-overlay.active {
-            display: block;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .modal-content {
-            position: fixed;
-            inset: 0;
-            z-index: 2000;
-            background: var(--bg);
-            display: none;
-            flex-direction: column;
-            overflow-y: auto;
-            animation: slideInUp 0.4s ease;
-        }
-        .modal-content.active {
-            display: flex;
-        }
-
-        .modal-header {
-            padding: 20px;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            background: var(--bg);
-            z-index: 10;
-        }
-
-        .modal-body {
-            flex: 1;
-            padding: 24px;
-            overflow-y: auto;
-        }
-
-        @media (max-width: 480px) {
-            .post-entry {
-                margin: 12px 16px 24px 16px;
-                padding: 16px;
-                border-radius: 24px;
-            }
-            .glass-nav {
-                padding: 16px 20px;
-            }
-        }
-
-        *:focus-visible {
-            outline: 2px solid var(--accent);
-            outline-offset: 2px;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-
-        .modal-confirm {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            z-index: 3000;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-confirm.active {
-            display: flex;
-        }
-        .modal-confirm-box {
-            background: var(--bg);
-            border-radius: 24px;
-            padding: 32px 24px;
-            max-width: 300px;
-            text-align: center;
-            animation: slideInUp 0.3s ease;
-        }
-        .modal-confirm-box h3 {
-            font-size: 18px;
-            margin-bottom: 12px;
-        }
-        .modal-confirm-box p {
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-        .modal-confirm-buttons {
-            display: flex;
-            gap: 12px;
-        }
-        .modal-confirm-buttons button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .modal-confirm-buttons .confirm-yes {
-            background: #ef4444;
-            color: white;
-        }
-        .modal-confirm-buttons .confirm-yes:hover {
-            background: #dc2626;
-        }
-        .modal-confirm-buttons .confirm-no {
-            background: var(--surface);
-            color: var(--text-main);
-        }
-        .modal-confirm-buttons .confirm-no:hover {
-            background: rgba(0,0,0,0.1);
-        }
-
-        .modal-content,
-        .modal-confirm {
-            display: none;
-        }
-
-        .modal-content.active,
-        .modal-confirm.active {
-            display: flex;
-        }
-
-        .layer {
-            display: none;
-        }
-        
     </style>
-    <style id="user-custom-css">/* User Custom CSS Space */</style>
+    
+    <style id="user-injected-css"></style>
 </head>
-<body class="pb-32 no-scrollbar" role="application" aria-label="AmonsPath Music Archive">
+<body class="dark">
 
-    <div id="toast-container" role="region" aria-live="polite" aria-label="Notifications"></div>
-
-    <div class="main-container">
-        <nav class="glass-nav" role="navigation" aria-label="Main navigation">
-            <div id="notif-panel" class="hidden fixed top-24 right-6 w-80 bg-white shadow-xl rounded-xl p-4 z-[4000]" role="complementary" aria-label="Notifications panel">
-                <div id="notif-list" aria-live="polite"></div>
+<div id="app-root">
+    <div id="screen-auth" class="min-h-screen flex flex-col items-center justify-center p-8 bg-white dark:bg-[#0f0f0f]">
+        <header class="text-center space-y-4 mb-20">
+            <h1 class="font-serif-italic text-8xl tracking-tighter leading-none mb-1">AmonsPath.</h1>
+            <p class="text-[11px] font-bold text-gray-400 uppercase tracking-[0.8em]">The Sound Archive</p>
+        </header>
+        <div class="w-full max-w-sm space-y-8">
+            <input id="auth-username" type="text" placeholder="Your unique path..." 
+                   class="w-full bg-gray-50 dark:bg-white/5 border-none rounded-[2.5rem] px-10 py-7 text-[15px] font-bold text-center shadow-huge transition-all focus:ring-4 focus:ring-pink-500/10">
+            <button onclick="handleLogin()" class="w-full bg-pink-500 text-white rounded-[2.5rem] py-7 text-[11px] font-extrabold uppercase tracking-[0.4em] shadow-2xl shadow-pink-500/30 hover:scale-[1.02] active:scale-95 transition-all">
+                Commence Journey
+            </button>
+            <div class="flex items-center gap-4 py-4">
+                <div class="flex-1 h-px bg-white/5"></div>
+                <span class="text-[9px] uppercase font-bold text-gray-500">or</span>
+                <div class="flex-1 h-px bg-white/5"></div>
             </div>
-            
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h1 class="font-serif-italic text-3xl tracking-tighter cursor-pointer hover:opacity-75 transition" onclick="location.reload()" role="heading" aria-level="1">AmonsPath.</h1>
-                    <p id="system-status" class="text-[8px] font-bold text-pink-500 uppercase tracking-[0.4em] mt-1" aria-label="System status">Live Discovery Engine</p>
+            <button onclick="handleGuest()" class="w-full text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em] hover:text-pink-500 transition-colors">
+                Spectral Observation (Guest)
+            </button>
+        </div>
+    </div>
+
+    <div id="main-ui" style="display: none;">
+        <header id="global-header" class="fixed top-0 left-0 right-0 z-[60] px-8 pt-12 pb-6 bg-transparent transition-all">
+            <div class="flex justify-between items-center max-w-xl mx-auto">
+                <h1 onclick="scrollToTop()" class="font-serif-italic text-5xl tracking-tighter cursor-pointer">Archives.</h1>
+                <div class="flex gap-4">
+                    <button onclick="openLayer('notifications')" class="p-4 bg-gray-100 dark:bg-white/5 rounded-3xl relative">
+                        <div id="notif-dot" class="w-2 h-2 bg-pink-500 rounded-full absolute top-3 right-3 hidden"></div>
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+                    </button>
                 </div>
-                <div class="flex gap-4 items-center">
-                    <button onclick="toggleSearchUI()" class="icon-small hover:opacity-70 transition" aria-label="Search" aria-expanded="false" aria-controls="search-overlay">🔍</button>
-                    <button onclick="toggleNotif()" class="icon-small hover:opacity-70 transition" aria-label="Settings" aria-expanded="false" aria-controls="notif-panel">⚙️</button>
-                    <div id="nav-pfp-trigger" class="w-10 h-10 rounded-full bg-gray-50 border-2 border-transparent overflow-hidden transition active:scale-90 cursor-pointer hover:opacity-75" onclick="openProfileLayer()" role="button" tabindex="0" aria-label="Open profile">
-                        <img id="pfp-mini" class="hidden w-full h-full object-cover" alt="User profile picture" loading="lazy">
-                        <div id="pfp-initial" class="w-full h-full flex items-center justify-center font-bold text-pink-500">👤</div>
+            </div>
+        </header>
+
+        <main id="feed-scroll" class="pt-40 pb-40 px-6 space-y-32 max-w-xl mx-auto">
+            </main>
+
+        <div id="layer-search" class="layer px-8 pt-24">
+            <div class="max-w-xl mx-auto space-y-12">
+                <h2 class="font-serif-italic text-6xl tracking-tighter">Search.</h2>
+                <div class="relative">
+                    <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="Filter frequencies..." 
+                           class="w-full bg-gray-100 dark:bg-white/5 p-7 rounded-[2.5rem] outline-none font-bold text-lg">
+                </div>
+                <div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
+                    <button class="px-8 py-3 bg-pink-500 text-white rounded-2xl text-[10px] font-bold uppercase tracking-widest">Posts</button>
+                    <button class="px-8 py-3 bg-white/5 text-gray-400 rounded-2xl text-[10px] font-bold uppercase tracking-widest">People</button>
+                    <button class="px-8 py-3 bg-white/5 text-gray-400 rounded-2xl text-[10px] font-bold uppercase tracking-widest">Music</button>
+                </div>
+                <div id="search-results" class="space-y-8"></div>
+            </div>
+        </div>
+
+        <div id="layer-profile" class="layer">
+            <div id="profile-content"></div>
+        </div>
+
+        <div id="layer-chat" class="layer pt-24">
+            <div class="max-w-xl mx-auto px-8">
+                <h2 class="font-serif-italic text-6xl tracking-tighter mb-12">Transmissions.</h2>
+                <div id="chat-list" class="space-y-4"></div>
+            </div>
+        </div>
+        
+        <div id="chat-room" class="layer z-[150]">
+            <div id="chat-room-content" class="h-full flex flex-col">
+                </div>
+        </div>
+
+        <div id="global-player" class="fixed bottom-32 left-4 right-4 z-[200] max-w-lg mx-auto bg-white/10 backdrop-blur-3xl border border-white/10 rounded-[3rem] p-5 hidden shadow-huge overflow-hidden">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-5 flex-1 min-w-0">
+                    <div class="w-14 h-14 rounded-[1.8rem] overflow-hidden shadow-2xl relative">
+                        <img id="player-art" src="" class="w-full h-full object-cover">
+                        <div id="player-visualizer" class="absolute inset-0 bg-pink-500/20 hidden flex items-center justify-center">
+                            <div class="flex gap-1">
+                                <div class="w-1 h-4 bg-white animate-bounce"></div>
+                                <div class="w-1 h-6 bg-white animate-bounce [animation-delay:0.2s]"></div>
+                                <div class="w-1 h-3 bg-white animate-bounce [animation-delay:0.4s]"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col min-w-0">
+                        <h4 id="player-title" class="text-sm font-black tracking-tight truncate">Track Name</h4>
+                        <p id="player-artist" class="text-[9px] uppercase tracking-[0.2em] text-pink-500 font-bold truncate">Artist Name</p>
                     </div>
                 </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleMusic()" class="w-14 h-14 bg-pink-500 text-white rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform">
+                        <svg id="play-pause-icon" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                    <button onclick="closePlayer()" class="w-10 h-10 text-gray-500 hover:text-white transition-colors">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </button>
+                </div>
             </div>
+        </div>
 
-            <div id="search-overlay" role="region" aria-label="Search section">
-                <input type="text" id="global-search-input" oninput="debounceSearch(this.value)" placeholder="Search by song, lyric or user..." class="input-premium search-user-text" aria-label="Global search">
-            </div>
-
-            <div class="flex gap-10 text-[10px] font-bold uppercase tracking-[0.2em] pb-1" role="tablist">
-                <button id="tab-btn-fyp" onclick="routeTo('fyp')" class="text-pink-500 border-b-2 border-pink-500 pb-3 hover:opacity-70 transition" role="tab" aria-selected="true" aria-controls="page-fyp">For You</button>
-                <button id="tab-btn-mine" onclick="routeTo('mine')" class="text-gray-300 pb-3 hover:opacity-70 transition" role="tab" aria-selected="false" aria-controls="page-mine">My Archive</button>
+        <nav class="fixed bottom-0 left-0 right-0 h-28 nav-blur border-t border-white/5 z-[300] px-10 pb-6">
+            <div class="max-w-xl mx-auto h-full flex items-center justify-between">
+                <button onclick="navigate('feed')" class="nav-btn active text-pink-500 transition-all">
+                    <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+                </button>
+                <button onclick="navigate('search')" class="nav-btn text-gray-500">
+                    <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                </button>
+                <button onclick="navigate('chat')" class="nav-btn text-gray-500 relative">
+                    <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                </button>
+                <button onclick="navigate('profile')" class="w-9 h-9 rounded-2xl overflow-hidden border-2 border-gray-500 transition-all hover:border-pink-500">
+                    <img id="nav-pfp" src="" class="w-full h-full object-cover">
+                </button>
             </div>
         </nav>
-
-        <section id="page-fyp" class="pt-8 px-2" role="main">
-            <div id="fyp-feed" class="space-y-4">
-                <div class="post-entry p-8"><div class="skeleton h-60 mb-6"></div><div class="skeleton h-4 w-1/2 mb-4"></div><div class="skeleton h-3 w-full"></div></div>
-                <div class="post-entry p-8"><div class="skeleton h-60 mb-6"></div><div class="skeleton h-4 w-1/2 mb-4"></div><div class="skeleton h-3 w-full"></div></div>
-            </div>
-        </section>
-
-        <section id="page-mine" class="hidden" role="main">
-            <header class="profile-header-premium">
-                <div class="profile-pfp-box" id="header-pfp-box">
-                    <img id="header-pfp" class="hidden w-full h-full object-cover" alt="User profile picture" loading="lazy">
-                    <div id="header-pfp-initial" class="text-4xl">👤</div>
-                </div>
-                <div class="flex flex-col justify-center flex-1">
-                    <h2 id="header-name" class="text-3xl font-extrabold tracking-tight">Accessing...</h2>
-                    <p id="header-username" class="text-[10px] text-gray-400 font-bold uppercase tracking-[0.3em] mt-2">@pathfinder</p>
-                    <div class="flex gap-2 mt-6">
-                        <span id="badge-privacy" class="status-badge bg-white border border-gray-100 text-gray-400">Public</span>
-                        <span class="status-badge bg-pink-500 text-white">Active</span>
-                    </div>
-                </div>
-            </header>
-            <div id="mine-feed" class="mine-archive-container"></div>
-        </section>
+        
+        <button id="fab-post" onclick="togglePostModal(true)" class="fixed bottom-32 right-8 z-[250] w-16 h-16 bg-pink-500 text-white rounded-[1.8rem] shadow-huge flex items-center justify-center active:scale-90 transition-all">
+            <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
     </div>
+</div>
 
-    <button id="create-post-btn" onclick="protectedAction(() => openModal('modal-post'))" class="icon-large fixed bottom-10 right-8" title="Create post" aria-label="Create new post">➕</button>
+<script>
+const tg = window.Telegram.WebApp;
+tg.expand();
 
-    <!-- PROFILE LAYER -->
-    <div id="profile-layer" class="layer no-scrollbar" role="complementary" aria-label="Profile settings">
-        <div class="p-10 pb-40">
-            <div class="flex justify-between items-center mb-16">
-                <button onclick="closeLayer('profile-layer')" class="text-[10px] font-bold text-gray-300 uppercase tracking-widest hover:text-pink-500 transition" aria-label="Close profile">← Back</button>
-                <button onclick="openModal('modal-edit-profile')" class="text-xs font-bold text-pink-500 hover:opacity-70 transition" aria-label="Edit profile">Edit Path</button>
-            </div>
+// DATABASE & STATE (From Types.ts & Contexts)
+const AMONS_KERNEL = {
+    currentUser: null,
+    isGuest: false,
+    activeScreen: 'feed',
+    isPlaying: false,
+    currentTrack: null,
+    audio: new Audio(),
+    
+    // MOCK_USERS (AuthContext.tsx)
+    users: [
+        {
+            id: 'zain_dev',
+            username: 'zain',
+            name: 'Zain',
+            bio: 'Engineering Lead @ AMONSPATH OS. Finding beauty in digital noise.',
+            pfp: 'https://picsum.photos/seed/zain/400',
+            header: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe',
+            themeColor: '#ec4899',
+            isDarkMode: true,
+            followers: 1200,
+            following: 450,
+            customCSS: `.archive-node:hover { border-color: #ec4899; }`,
+            wallpapers: { 'adnan': 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e' }
+        },
+        {
+            id: 'adnan_user',
+            username: 'adnan',
+            name: 'Adnan',
+            bio: 'Archiving every rhythm. Catching echoes.',
+            pfp: 'https://picsum.photos/seed/adnan/400',
+            header: 'https://images.unsplash.com/photo-1557683316-973673baf926',
+            themeColor: '#6366f1'
+        }
+    ],
 
-            <div class="flex flex-col items-center mb-16">
-                <div class="relative w-36 h-36 mb-8">
-                    <div class="w-full h-full rounded-[40px] object-cover shadow-2xl bg-gray-100 flex items-center justify-center" id="layer-pfp-box">
-                        <img id="layer-pfp" class="hidden w-full h-full rounded-[40px] object-cover shadow-2xl" alt="User profile picture" loading="lazy">
-                        <div id="layer-pfp-initial" class="text-6xl">👤</div>
+    // MOCK_POSTS (PostContext.tsx)
+    posts: [
+        {
+            id: 'p1',
+            userId: 'zain_dev',
+            type: 'music',
+            music: {
+                id: 'm1',
+                name: 'Vignette',
+                artist: 'Archiver',
+                artwork: 'https://picsum.photos/seed/music1/600',
+                url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+            },
+            caption: 'Welcome to the path. Testing Kernel v15.0 @adnan',
+            likes: ['adnan_user'],
+            comments: [
+                { 
+                    id: 'c1', 
+                    userId: 'adnan_user', 
+                    text: 'This frequency feels right, Zain.', 
+                    timestamp: '2m ago',
+                    replies: [
+                        { id: 'r1', userId: 'zain_dev', text: 'Steady as always.', timestamp: '1m ago' }
+                    ]
+                }
+            ],
+            timestamp: 'Just now'
+        }
+    ]
+};
+
+// CORE FUNCTIONS
+function haptic(style = 'light') {
+    tg.HapticFeedback.impactOccurred(style);
+}
+
+function handleLogin() {
+    const input = document.getElementById('auth-username').value;
+    if (!input) return;
+    
+    AMONS_KERNEL.currentUser = AMONS_KERNEL.users[0]; // Auto-login as Zain for demo
+    AMONS_KERNEL.currentUser.username = input;
+    startApp();
+    haptic('medium');
+}
+
+function handleGuest() {
+    AMONS_KERNEL.isGuest = true;
+    AMONS_KERNEL.currentUser = { name: 'Guest', username: 'spectator', pfp: 'https://ui-avatars.com/api/?name=G' };
+    startApp();
+}
+
+function startApp() {
+    document.getElementById('screen-auth').style.display = 'none';
+    document.getElementById('main-ui').style.display = 'block';
+    document.getElementById('nav-pfp').src = AMONS_KERNEL.currentUser.pfp;
+    
+    // Inject User CSS
+    if (AMONS_KERNEL.currentUser.customCSS) {
+        document.getElementById('user-injected-css').innerHTML = AMONS_KERNEL.currentUser.customCSS;
+    }
+    
+    renderFeed();
+}
+
+// NAVIGATION ENGINE
+function navigate(screen) {
+    haptic();
+    document.querySelectorAll('.layer').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('text-pink-500'));
+    
+    if (screen === 'feed') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        document.getElementById(`layer-${screen}`).classList.add('active');
+    }
+    
+    // Update Nav Icons
+    event?.currentTarget?.classList.add('text-pink-500');
+    
+    if (screen === 'profile') renderProfile(AMONS_KERNEL.currentUser.username);
+    if (screen === 'chat') renderChatList();
+}
+
+// RENDER ENGINE: FEED (PostCard.tsx logic)
+function renderFeed() {
+    const container = document.getElementById('feed-scroll');
+    container.innerHTML = AMONS_KERNEL.posts.map(post => {
+        const user = AMONS_KERNEL.users.find(u => u.id === post.userId) || post.user;
+        const hasLiked = post.likes.includes(AMONS_KERNEL.currentUser?.id);
+        
+        return `
+            <div class="archive-node bg-gray-50 dark:bg-white/5 p-8 space-y-8 shadow-2xl overflow-hidden relative group">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-4 cursor-pointer" onclick="renderProfile('${user.username}')">
+                        <img src="${user.pfp}" class="w-14 h-14 rounded-2xl object-cover border border-white/5">
+                        <div>
+                            <p class="font-extrabold text-sm tracking-tight">${user.name}</p>
+                            <p class="text-[9px] uppercase tracking-[0.2em] text-gray-500">@${user.username} • ${post.timestamp}</p>
+                        </div>
                     </div>
-                    <div class="absolute -bottom-2 -right-2 bg-white p-3 rounded-full shadow-xl">✨</div>
+                    <button class="text-gray-400"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></button>
                 </div>
-                <h3 id="layer-name" class="text-3xl font-bold">...</h3>
-                <p id="layer-bio" class="text-sm text-gray-400 mt-5 text-center px-10">Searching for meaning in melodies.</p>
-            </div>
 
-            <div class="grid grid-cols-2 gap-6 mb-12">
-                <div class="bg-gray-50 p-8 rounded-[30px] text-center border border-gray-100">
-                    <span id="stat-count-posts" class="block text-3xl font-extrabold">0</span>
-                    <span class="text-[9px] text-gray-300 uppercase font-bold tracking-[0.2em] mt-2 block">Archives</span>
-                </div>
-                <div class="bg-gray-50 p-8 rounded-[30px] text-center border border-gray-100">
-                    <span id="stat-count-likes" class="block text-3xl font-extrabold">0</span>
-                    <span class="text-[9px] text-gray-300 uppercase font-bold tracking-[0.2em] mt-2 block">Interactions</span>
-                </div>
-            </div>
-
-            <div class="profile-editable-content space-y-8">
-                <div>
-                    <label class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-5 block">Visual Palette (Accent)</label>
-                    <div class="flex gap-4">
-                        <button onclick="pendingTheme('#ec4899')" class="w-12 h-12 rounded-full bg-[#ec4899] shadow-lg shadow-pink-200 hover:scale-110 transition" title="Pink">⭐</button>
-                        <button onclick="pendingTheme('#1a1a1a')" class="w-12 h-12 rounded-full bg-[#1a1a1a] shadow-lg shadow-gray-200 hover:scale-110 transition" title="Black">⭐</button>
-                        <button onclick="pendingTheme('#3b82f6')" class="w-12 h-12 rounded-full bg-[#3b82f6] shadow-lg shadow-blue-200 hover:scale-110 transition" title="Blue">⭐</button>
-                        <button onclick="pendingTheme('#10b981')" class="w-12 h-12 rounded-full bg-[#10b981] shadow-lg shadow-emerald-200 hover:scale-110 transition" title="Green">⭐</button>
+                <div class="relative aspect-square rounded-[2.5rem] overflow-hidden shadow-huge cursor-pointer" onclick="handleTrackAction('${post.id}')">
+                    <img src="${post.music.artwork}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+                        <div class="w-20 h-20 bg-white/10 backdrop-blur-2xl rounded-full flex items-center justify-center border border-white/20">
+                            <svg width="32" height="32" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-6 right-6 w-12 h-12 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center border border-white/10">
+                         <svg width="18" height="18" class="text-pink-500 animate-spin-slow" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/></svg>
                     </div>
                 </div>
 
-                <div class="bg-gray-50 p-8 rounded-[30px] flex justify-between items-center">
-                    <div>
-                        <span class="block text-xs font-bold uppercase tracking-widest">Ghost Mode</span>
-                        <p class="text-[10px] text-gray-400 mt-1">Hide your footprints from discovery</p>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="privacy-toggle" class="sr-only peer" onchange="pendingPrivacy(this.checked)" aria-label="Toggle ghost mode">
-                        <div class="w-14 h-8 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-pink-500 after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all"></div>
-                    </label>
+                <div class="space-y-4">
+                    <h3 class="text-2xl font-black tracking-tighter">${post.music.name} <span class="text-pink-500 font-normal text-sm ml-2 italic">/ ${post.music.artist}</span></h3>
+                    <p class="text-sm text-gray-500 leading-relaxed font-medium">${renderCaption(post.caption)}</p>
                 </div>
 
-                <div>
-                    <label class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-5 block" for="input-css">Mirroring Engine (Custom CSS)</label>
-                    <textarea id="input-css" class="input-premium h-48 font-mono text-[11px] leading-relaxed" placeholder="/* .post-entry { border-radius: 0; } */" aria-label="Custom CSS input"></textarea>
-                </div>
-
-                <button onclick="saveGlobalConfig()" class="btn-premium mt-8" aria-label="Save profile configuration">Synchronization</button>
-                <button onclick="logoutUser()" class="btn-secondary mt-4" aria-label="Logout">Logout</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- EDIT PROFILE MODAL -->
-    <div id="modal-edit-profile" class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-edit-title">
-        <div class="modal-header">
-            <h3 id="modal-edit-title" class="font-serif-italic text-2xl flex-1">Edit Path.</h3>
-            <button onclick="closeModal('modal-edit-profile')" class="text-2xl hover:opacity-70" aria-label="Close">✕</button>
-        </div>
-        <div class="modal-body space-y-6 max-w-md mx-auto w-full">
-            <div>
-                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 block" for="edit-pfp">Profile Photo</label>
-                <input type="file" id="edit-pfp" accept="image/*" class="input-premium" aria-label="Update profile photo">
-                <div id="edit-pfp-preview" class="mt-4 w-full h-32 bg-gray-100 rounded-2xl overflow-hidden hidden">
-                    <img id="edit-pfp-img" class="w-full h-full object-cover" alt="Preview">
+                <div class="flex items-center gap-8 pt-4">
+                    <button onclick="handleLike('${post.id}')" class="flex items-center gap-2 ${hasLiked ? 'text-pink-500' : 'text-gray-400'} transition-all hover:scale-110">
+                        <svg width="22" height="22" fill="${hasLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                        <span class="text-[10px] font-black">${post.likes.length}</span>
+                    </button>
+                    <button onclick="openComments('${post.id}')" class="flex items-center gap-2 text-gray-400">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                        <span class="text-[10px] font-black">${post.comments.length}</span>
+                    </button>
+                    <button class="ml-auto text-gray-400"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z"/></svg></button>
                 </div>
             </div>
+        `;
+    }).join('');
+}
 
-            <div>
-                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 block" for="edit-name">Display Name</label>
-                <input type="text" id="edit-name" class="input-premium" placeholder="Your Name" aria-label="Display name">
-            </div>
+function renderCaption(text) {
+    return text.replace(/@(\w+)/g, '<span class="text-pink-500 font-bold cursor-pointer hover:underline">@$1</span>');
+}
 
-            <div>
-                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 block" for="edit-username">Username</label>
-                <input type="text" id="edit-username" class="input-premium" placeholder="username" aria-label="Username" disabled>
-                <p class="text-[8px] text-gray-400 mt-2">Username cannot be changed</p>
-            </div>
+// Lanjut ke Bagian 3: Komentar, Chat Room, & Profile (Sangat Detail)...
 
-            <div>
-                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 block" for="edit-bio">Bio</label>
-                <textarea id="edit-bio" class="input-premium h-24 resize-none" placeholder="Tell about yourself..." aria-label="Bio"></textarea>
-            </div>
 
-            <button onclick="saveProfileEdits()" class="btn-premium" aria-label="Save profile changes">Save Changes</button>
-            <button onclick="closeModal('modal-edit-profile')" class="btn-secondary">Cancel</button>
-        </div>
-    </div>
+// --- INTERACTION & COMMENT SYSTEM (PostDetail.tsx & PostContext.tsx Logic) ---
 
-    <!-- CREATE POST MODAL -->
-    <div id="modal-post" class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-post-title">
-        <div class="modal-header">
-            <h3 id="modal-post-title" class="font-serif-italic text-2xl flex-1">New Memory.</h3>
-            <button onclick="closeModal('modal-post')" class="text-2xl hover:opacity-70" aria-label="Close">✕</button>
-        </div>
-        <div class="modal-body space-y-10 max-w-md mx-auto w-full">
-            <div>
-                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-5 block" for="itunes-search">Select Sound</label>
-                <div class="relative">
-                    <input type="text" id="itunes-search" oninput="searchMusicEngine(this.value)" placeholder="Search songs or artists..." class="input-premium" aria-label="Search music">
-                    <div id="itunes-loader" class="hidden absolute right-5 top-5" aria-hidden="true"><div class="spinner"></div></div>
-                </div>
-                <div id="itunes-results" class="hidden mt-4 max-h-60 overflow-y-auto bg-gray-50 rounded-3xl border border-gray-100 no-scrollbar" role="region" aria-live="polite" aria-label="Music results"></div>
-            </div>
-
-            <div id="selection-preview" class="hidden p-6 bg-pink-50 rounded-[30px] flex items-center gap-6 border border-pink-100">
-                <img id="sel-art" class="w-24 h-24 rounded-2xl shadow-2xl" alt="Selected track artwork" loading="lazy">
-                <div class="flex-1 overflow-hidden">
-                    <p id="sel-name" class="text-md font-bold truncate"></p>
-                    <p id="sel-artist" class="text-[10px] text-gray-400 uppercase tracking-widest mt-2"></p>
-                    <div class="flex gap-2 mt-4">
-                        <div class="viz-container"><div class="viz-bar viz-anim"></div><div class="viz-bar viz-anim" style="animation-delay: 0.2s"></div><div class="viz-bar viz-anim" style="animation-delay: 0.4s"></div></div>
-                        <span class="text-[8px] font-bold text-pink-500">READY TO SYNC</span>
-                    </div>
-                </div>
-                <button onclick="clearMusicSelection()" class="text-gray-300 p-2 hover:text-gray-500 transition" aria-label="Clear selection">✕</button>
-            </div>
-
-            <div>
-                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-5 block" for="post-caption">Entry Caption</label>
-                <textarea id="post-caption" class="input-premium h-44 resize-none leading-relaxed" placeholder="Write your internal monologue here..." aria-label="Post caption"></textarea>
-            </div>
-
-            <button id="btn-publish" onclick="processPublish()" class="btn-premium" aria-label="Publish post">Archive Forever</button>
-            <button onclick="closeModal('modal-post')" class="btn-secondary">Cancel</button>
-        </div>
-    </div>
-
-    <!-- AUTH MODAL -->
-    <div id="modal-auth" class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-auth-title">
-        <div class="modal-body max-w-md mx-auto w-full flex flex-col justify-center min-h-screen">
-            <div class="text-center mb-12">
-                <h2 id="modal-auth-title" class="font-serif-italic text-5xl mb-4">Identity.</h2>
-                <p class="text-[10px] text-gray-400 uppercase tracking-[0.5em]">Create Your Path</p>
+function openComments(postId) {
+    haptic('medium');
+    const post = AMONS_KERNEL.posts.find(p => p.id === postId);
+    const commentLayer = document.createElement('div');
+    commentLayer.id = 'comment-overlay';
+    commentLayer.className = 'layer active z-[400] bg-white dark:bg-[#0f0f0f]';
+    
+    commentLayer.innerHTML = `
+        <div class="max-w-xl mx-auto p-8 pb-40">
+            <div class="flex items-center gap-6 mb-12">
+                <button onclick="closeComments()" class="p-4 bg-gray-100 dark:bg-white/5 rounded-2xl">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </button>
+                <h2 class="font-serif-italic text-4xl tracking-tighter">Echoes.</h2>
             </div>
             
+            <div id="comment-list" class="space-y-10">
+                ${renderComments(post.comments)}
+            </div>
+        </div>
+        
+        <div class="fixed bottom-0 left-0 right-0 p-6 bg-white/80 dark:bg-black/80 backdrop-blur-2xl border-t border-white/5 z-[410]">
+            <div class="max-w-xl mx-auto relative">
+                <input type="text" id="comment-input" placeholder="Add to the frequency..." 
+                       class="w-full bg-gray-100 dark:bg-white/5 p-6 rounded-[2rem] outline-none font-bold">
+                <button onclick="submitComment('${postId}')" class="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-pink-500 text-white rounded-2xl flex items-center justify-center">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(commentLayer);
+}
+
+function renderComments(comments) {
+    return comments.map(c => {
+        const user = AMONS_KERNEL.users.find(u => u.id === c.userId);
+        return `
             <div class="space-y-6">
-                <div class="flex flex-col gap-2">
-                    <label class="text-[9px] font-bold text-gray-300 uppercase" for="auth-pfp">Profile Photo (Optional)</label>
-                    <input type="file" id="auth-pfp" accept="image/*" class="input-premium" aria-label="Profile photo">
-                    <div id="auth-pfp-preview" class="mt-4 w-full h-32 bg-gray-100 rounded-2xl overflow-hidden hidden">
-                        <img id="auth-pfp-img" class="w-full h-full object-cover" alt="Preview">
+                <div class="flex gap-4">
+                    <img src="${user?.pfp}" class="w-10 h-10 rounded-xl object-cover">
+                    <div class="flex-1">
+                        <div class="bg-gray-100 dark:bg-white/5 p-5 rounded-[1.5rem] rounded-tl-none">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-pink-500 mb-1">${user?.name}</p>
+                            <p class="text-sm font-medium leading-relaxed">${c.text}</p>
+                        </div>
+                        <div class="flex gap-4 mt-2 px-2">
+                            <span class="text-[9px] font-bold text-gray-500 uppercase">${c.timestamp}</span>
+                            <button class="text-[9px] font-black text-pink-500 uppercase tracking-widest">Reply</button>
+                        </div>
                     </div>
                 </div>
+                ${c.replies ? `<div class="ml-12 border-l-2 border-white/5 pl-6 space-y-6">${renderComments(c.replies)}</div>` : ''}
+            </div>
+        `;
+    }).join('');
+}
 
-                <div class="flex flex-col gap-2">
-                    <label class="text-[9px] font-bold text-gray-300 uppercase" for="auth-name">Display Name</label>
-                    <input id="auth-name" type="text" placeholder="Your Name" class="input-premium" aria-label="Display name">
+function closeComments() {
+    const el = document.getElementById('comment-overlay');
+    if (el) el.remove();
+}
+
+// --- CHAT SYSTEM (Chat.tsx Logic) ---
+
+function renderChatList() {
+    const container = document.getElementById('chat-list');
+    const contacts = AMONS_KERNEL.users.filter(u => u.id !== AMONS_KERNEL.currentUser.id);
+    
+    container.innerHTML = contacts.map(contact => `
+        <div onclick="openChatRoom('${contact.username}')" class="flex items-center justify-between p-6 bg-gray-50 dark:bg-white/5 rounded-[2.5rem] cursor-pointer hover:scale-[1.02] transition-all">
+            <div class="flex items-center gap-5">
+                <div class="w-16 h-16 rounded-[1.8rem] overflow-hidden border-2 border-white/10">
+                    <img src="${contact.pfp}" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <p class="font-black text-lg tracking-tight">${contact.name}</p>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Active Frequency</p>
+                </div>
+            </div>
+            <div class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+            </div>
+        </div>
+    `).join('');
+}
+
+function openChatRoom(username) {
+    const targetUser = AMONS_KERNEL.users.find(u => u.username === username);
+    const wallpaper = AMONS_KERNEL.currentUser.wallpapers?.[username] || 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e';
+    
+    const room = document.getElementById('chat-room');
+    room.classList.add('active');
+    
+    document.getElementById('chat-room-content').innerHTML = `
+        <div class="chat-container h-full flex flex-col" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${wallpaper}')">
+            <div class="p-8 pt-16 flex items-center gap-6 nav-blur border-b border-white/5">
+                <button onclick="closeChatRoom()" class="text-white">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </button>
+                <div class="flex items-center gap-4">
+                    <img src="${targetUser.pfp}" class="w-12 h-12 rounded-2xl object-cover">
+                    <div>
+                        <p class="text-white font-black tracking-tight">${targetUser.name}</p>
+                        <p class="text-[9px] text-pink-500 font-bold uppercase tracking-[0.3em]">Encrypted Path</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="message-flow" class="flex-1 overflow-y-auto p-8 space-y-6">
+                <div class="flex justify-center my-10">
+                    <span class="px-6 py-2 bg-black/40 backdrop-blur-md rounded-full text-[9px] font-bold text-gray-400 uppercase tracking-widest">Beginning of Archive</span>
+                </div>
+            </div>
+
+            <div class="p-8 pb-12 bg-black/20 backdrop-blur-3xl border-t border-white/5">
+                <div class="flex gap-4">
+                    <input type="text" id="msg-input" placeholder="Transmit..." 
+                           class="flex-1 bg-white/10 border border-white/10 rounded-[2rem] px-8 py-5 text-white outline-none">
+                    <button onclick="sendMessage()" class="w-16 h-16 bg-pink-500 text-white rounded-full flex items-center justify-center shadow-huge">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function closeChatRoom() {
+    document.getElementById('chat-room').classList.remove('active');
+}
+
+// --- PROFILE ENGINE (Profile.tsx Logic) ---
+
+function renderProfile(username) {
+    const user = AMONS_KERNEL.users.find(u => u.username === username);
+    const isOwn = user.id === AMONS_KERNEL.currentUser.id;
+    const container = document.getElementById('profile-content');
+    
+    container.innerHTML = `
+        <div class="relative">
+            <div class="h-[40vh] relative overflow-hidden">
+                <img src="${user.header || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe'}" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent to-[var(--bg-color)]"></div>
+            </div>
+            
+            <div class="px-8 -mt-32 relative z-10 space-y-8">
+                <div class="flex justify-between items-end">
+                    <div class="w-32 h-32 rounded-[2.5rem] border-8 border-[var(--bg-color)] overflow-hidden shadow-huge">
+                        <img src="${user.pfp}" class="w-full h-full object-cover">
+                    </div>
+                    ${isOwn ? 
+                        `<button onclick="openSettings()" class="bg-white/10 backdrop-blur-md border border-white/10 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest">Settings</button>` :
+                        `<button class="bg-pink-500 text-white px-10 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-huge">Follow</button>`
+                    }
                 </div>
                 
-                <div class="flex flex-col gap-2">
-                    <label class="text-[9px] font-bold text-gray-300 uppercase" for="auth-user">System Username</label>
-                    <div class="relative">
-                        <input id="auth-user" type="text" oninput="validateUsername(this.value)" placeholder="username" class="input-premium" aria-label="Username">
-                        <span id="user-status-msg" class="absolute right-6 top-5 text-[9px] font-bold" role="status"></span>
+                <div class="space-y-2">
+                    <h2 class="font-serif-italic text-6xl tracking-tighter">${user.name}.</h2>
+                    <p class="text-pink-500 font-bold text-xs uppercase tracking-[0.4em]">@${user.username}</p>
+                </div>
+                
+                <p class="text-gray-500 font-medium leading-relaxed max-w-md">${user.bio}</p>
+                
+                <div class="flex gap-12 pt-4">
+                    <div>
+                        <p class="text-2xl font-black">${user.followers}</p>
+                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Followers</p>
                     </div>
-                    <p class="text-[8px] text-gray-400">Minimum 3 characters, letters & numbers only</p>
+                    <div>
+                        <p class="text-2xl font-black">${user.following}</p>
+                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Following</p>
+                    </div>
                 </div>
 
-                <div class="flex flex-col gap-2">
-                    <label class="text-[9px] font-bold text-gray-300 uppercase" for="auth-bio">Bio (Optional)</label>
-                    <textarea id="auth-bio" placeholder="A few words about yourself..." class="input-premium h-24" aria-label="Bio"></textarea>
+                <div class="flex border-b border-white/5 gap-10 overflow-x-auto no-scrollbar pt-10">
+                    <button class="pb-6 border-b-2 border-pink-500 text-[10px] font-black uppercase tracking-widest">Music</button>
+                    <button class="pb-6 border-transparent text-gray-500 text-[10px] font-black uppercase tracking-widest">Notes</button>
+                    <button class="pb-6 border-transparent text-gray-500 text-[10px] font-black uppercase tracking-widest">Archive</button>
                 </div>
 
-                <button id="auth-submit" onclick="finishRegistration()" class="btn-premium opacity-50 mt-10" disabled aria-label="Complete registration">Confirm Path</button>
-                <button onclick="guestMode()" class="btn-secondary">Continue as Guest</button>
+                <div id="profile-grid" class="grid grid-cols-2 gap-6 pb-20">
+                    ${renderProfileGrid(user.id)}
+                </div>
             </div>
         </div>
-    </div>
+    `;
+}
 
-    <!-- CONFIRMATION MODAL -->
-    <div id="modal-confirm" class="modal-confirm">
-        <div class="modal-confirm-box">
-            <h3 id="confirm-title">Confirm?</h3>
-            <p id="confirm-message"></p>
-            <div class="modal-confirm-buttons">
-                <button class="confirm-no" onclick="closeConfirm()">Cancel</button>
-                <button class="confirm-yes" onclick="executeConfirm()">Confirm</button>
+function renderProfileGrid(userId) {
+    const userPosts = AMONS_KERNEL.posts.filter(p => p.userId === userId);
+    if (userPosts.length === 0) return `<div class="col-span-2 py-20 text-center text-gray-600 text-[10px] uppercase font-bold tracking-[0.5em]">No Echoes Found</div>`;
+    
+    return userPosts.map(p => `
+        <div onclick="handleTrackAction('${p.id}')" class="aspect-square rounded-[2rem] overflow-hidden relative group cursor-pointer shadow-lg">
+            <img src="${p.music.artwork}" class="w-full h-full object-cover transition-transform group-hover:scale-110">
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
+                <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             </div>
         </div>
-    </div>
+    `).join('');
+}
 
-    <script type="module">
-       document.addEventListener("click", () => {}, true);
-       document.addEventListener("touchstart", () => {}, true); 
+// --- MUSIC PLAYER ENGINE (MusicContext.tsx Logic) ---
 
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+function handleTrackAction(postId) {
+    const post = AMONS_KERNEL.posts.find(p => p.id === postId);
+    const track = post.music;
+    
+    if (AMONS_KERNEL.currentTrack?.id === track.id) {
+        toggleMusic();
+    } else {
+        playTrack(track);
+    }
+}
 
-    const supabase = createClient(
-      "https://aldzhrtbrjszppseawrz.supabase.co",
-      "sb_publishable_h-BSul_X4VDxc-6gwSUa0w_Z_rsJ2xp"
+function playTrack(track) {
+    haptic('heavy');
+    AMONS_KERNEL.currentTrack = track;
+    AMONS_KERNEL.audio.src = track.url;
+    AMONS_KERNEL.audio.play();
+    AMONS_KERNEL.isPlaying = true;
+    
+    updatePlayerUI();
+}
+
+function toggleMusic() {
+    if (!AMONS_KERNEL.currentTrack) return;
+    
+    if (AMONS_KERNEL.isPlaying) {
+        AMONS_KERNEL.audio.pause();
+        AMONS_KERNEL.isPlaying = false;
+    } else {
+        AMONS_KERNEL.audio.play();
+        AMONS_KERNEL.isPlaying = true;
+    }
+    updatePlayerUI();
+}
+
+function updatePlayerUI() {
+    const player = document.getElementById('global-player');
+    const track = AMONS_KERNEL.currentTrack;
+    
+    if (!track) {
+        player.style.display = 'none';
+        return;
+    }
+    
+    player.style.display = 'block';
+    document.getElementById('player-art').src = track.artwork;
+    document.getElementById('player-title').innerText = track.name;
+    document.getElementById('player-artist').innerText = track.artist;
+    
+    const icon = document.getElementById('play-pause-icon');
+    if (AMONS_KERNEL.isPlaying) {
+        icon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+        document.getElementById('player-visualizer').classList.remove('hidden');
+    } else {
+        icon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+        document.getElementById('player-visualizer').classList.add('hidden');
+    }
+}
+
+// Initialize
+window.onload = () => {
+    // Jika data localstorage ada, bisa auto-login disini
+};
+
+
+
+// --- NOTIFICATION ENGINE (Notifications.tsx Logic) ---
+
+function renderNotifications() {
+    const container = document.getElementById('notif-list');
+    const NOTIFS = [
+        { id: '1', type: 'like', user: 'Adnan', action: 'bookmarked your archive', timestamp: '2m' },
+        { id: '2', type: 'follow', user: 'Archiver', action: 'started following your path', timestamp: '1h' },
+        { id: '3', type: 'comment', user: 'Karlee', action: 'echoed in your journal', timestamp: '3h' }
+    ];
+
+    container.innerHTML = NOTIFS.map(n => `
+        <div class="flex items-center gap-6 p-6 bg-gray-50 dark:bg-[#1a1a1a] rounded-[2rem] border border-black/5 dark:border-white/5 transition-transform hover:scale-[1.01]">
+            <div class="w-14 h-14 rounded-[1.5rem] bg-white dark:bg-black/20 flex items-center justify-center text-pink-500 shadow-sm">
+                ${n.type === 'like' ? '<svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>' : ''}
+                ${n.type === 'follow' ? '<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M8.5 7a4 4 0 110-8 4 4 0 010 8zm11 1v6m-3-3h6"/></svg>' : ''}
+                ${n.type === 'comment' ? '<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>' : ''}
+            </div>
+            <div class="flex flex-col flex-1">
+                <span class="text-[14px] font-bold tracking-tight">
+                    ${n.user} <span class="font-normal text-gray-400">${n.action}</span>
+                </span>
+                <span class="text-[9px] text-gray-400 uppercase tracking-widest mt-1">${n.timestamp} ago</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// --- SETTINGS & CUSTOMIZATION (Settings.tsx Logic) ---
+
+function applyCustomTheme(user) {
+    if (!user) return;
+    
+    // Inject Custom CSS jika ada
+    if (user.customCSS) {
+        let styleTag = document.getElementById('user-custom-css');
+        if (!styleTag) {
+            styleTag = document.createElement('style');
+            styleTag.id = 'user-custom-css';
+            document.head.appendChild(styleTag);
+        }
+        styleTag.innerHTML = user.customCSS;
+    }
+
+    // Apply Theme Colors
+    document.documentElement.style.setProperty('--accent-color', user.themeColor || '#ec4899');
+    document.documentElement.classList.toggle('dark', user.isDarkMode);
+}
+
+// --- SEARCH LOGIC (Search.tsx) ---
+
+function handleSearch(query) {
+    const q = query.toLowerCase();
+    const filteredUsers = AMONS_KERNEL.users.filter(u => 
+        u.name.toLowerCase().includes(q) || u.username.toLowerCase().includes(q)
     );
-
-    window.supabase = supabase;
-    window.appState = {
-        currentUser: null,
-        userSession: null,
-        myProfileData: null,
-        isGuest: false,
-        page: 0,
-        limit: 5,
-        selectedMusic: null,
-        pendingThemeColor: null,
-        pendingPrivacyState: null,
-        hasChanges: false,
-        confirmCallback: null
-    };
-
-    // ============ INITIALIZATION ============
-    async function initApp() {
-        document.querySelectorAll('.modal-content, .modal-confirm')
-         .forEach(el => {
-           el.style.display = 'none';
-           el.classList.remove('active');
-        });
-          
-        document.getElementById('profile-layer').style.display = 'none';
-        try {
-        // Check localStorage first
-        const savedUser = localStorage.getItem('auth:userData');
-        const savedUserId = localStorage.getItem('auth:userId');
-        const isGuestMode = localStorage.getItem('auth:guestMode') === 'true';
-
-        if (savedUser && savedUserId && !isGuestMode) {
-          // User has saved profile
-          window.appState.myProfileData = JSON.parse(savedUser);
-          window.appState.userSession = { id: savedUserId };
-          window.appState.currentUser = { id: savedUserId };
-          window.appState.isGuest = false;
-          loadFeed(true);
-          loadUserProfile();
-          applyUserSettings();
-        } else if (isGuestMode) {
-          // Guest mode
-          window.appState.isGuest = true;
-          const guestId = savedUserId || `guest_${Date.now()}`;
-          localStorage.setItem('auth:userId', guestId);
-          window.appState.userSession = { id: guestId };
-          window.appState.currentUser = { id: guestId };
-          loadFeed(true);
-          
-        } else {
-          // New user - show signup
-          const anonSession = await supabase.auth.signInAnonymously();
-          window.appState.userSession = anonSession.data.user;
-          window.appState.currentUser = anonSession.data.user;
-          document.getElementById('modal-auth').classList.add('active');
-        }
-      } catch (error) {
-        console.error('Init error:', error);
-        // Fallback to guest mode
-        const guestId = `guest_${Date.now()}`;
-        localStorage.setItem('auth:userId', guestId);
-        localStorage.setItem('auth:guestMode', 'true');
-        window.appState.isGuest = true;
-        window.appState.userSession = { id: guestId };
-        window.appState.currentUser = { id: guestId };
-        loadFeed(true);
-      }
-    }
-
-    window.initApp = initApp;
-    initApp();
-
-    // ============ AUTHENTICATION ============
-    window.finishRegistration = async function() {
-      const name = document.getElementById('auth-name').value.trim();
-      const username = document.getElementById('auth-user').value.trim();
-      const bio = document.getElementById('auth-bio').value.trim();
-      const pfpFile = document.getElementById('auth-pfp').files[0];
-
-      if (!name || !username) {
-        showToast('Please fill in name and username', 'error');
+    
+    const resultsContainer = document.getElementById('search-results');
+    if (q === '') {
+        resultsContainer.innerHTML = `<p class="text-center text-[11px] font-black text-gray-300 uppercase tracking-[0.8em] py-20">Spectral Silence</p>`;
         return;
-      }
-
-      try {
-        let pfpUrl = '';
-        if (pfpFile) {
-          const reader = new FileReader();
-          pfpUrl = await new Promise((resolve) => {
-            reader.onload = (e) => resolve(e.target.result);
-            reader.readAsDataURL(pfpFile);
-          });
-        }
-
-        const userId = window.appState.userSession.id;
-        const profileData = {
-          user_id: userId,
-          name,
-          username,
-          bio,
-          pfp: pfpUrl,
-          theme: '#ec4899',
-          private: false
-        };
-
-        // Save to localStorage
-        localStorage.setItem('auth:userId', userId);
-        localStorage.setItem('auth:userData', JSON.stringify(profileData));
-        localStorage.removeItem('auth:guestMode');
-
-        window.appState.myProfileData = profileData;
-        window.appState.isGuest = false;
-
-        // Also try to save to Supabase if possible
-        try {
-          await supabase.from('profiles').upsert({
-            user_id: userId,
-            ...profileData
-          });
-        } catch (e) {
-          console.log('Supabase save failed, using localStorage only');
-        }
-
-        showToast('Profile created successfully!', 'success');
-        document.getElementById('modal-auth').classList.remove('active');
-        updateProfileUI(profileData);
-        loadFeed(true);
-      } catch (error) {
-        console.error('Registration error:', error);
-        showToast('Failed to create profile', 'error');
-      }
-    };
-
-    window.guestMode = function() {
-      const guestId = `guest_${Date.now()}`;
-      localStorage.setItem('auth:userId', guestId);
-      localStorage.setItem('auth:guestMode', 'true');
-      window.appState.isGuest = true;
-      window.appState.userSession = { id: guestId };
-      window.appState.currentUser = { id: guestId };
-      document.getElementById('modal-auth').classList.remove('active');
-      loadFeed(true);
-      showToast('Welcome, guest!', 'info');
-    };
-
-    window.logoutUser = function() {
-      showConfirm('Logout?', 'Are you sure you want to logout?', () => {
-        localStorage.removeItem('auth:userId');
-        localStorage.removeItem('auth:userData');
-        localStorage.setItem('auth:guestMode', 'true');
-        window.appState.myProfileData = null;
-        window.appState.isGuest = true;
-        document.getElementById('modal-auth').classList.add('active');
-        location.reload();
-      });
-    };
-
-    // ============ FEED ============
-    async function loadFeed(reset = false) {
-      try {
-        const container = document.getElementById("fyp-feed");
-
-        if (reset) {
-          window.appState.page = 0;
-          container.innerHTML = `<div class="text-center py-10 flex items-center justify-center gap-2"><div class="spinner"></div><span>Loading posts...</span></div>`;
-        }
-
-        const { data, error } = await supabase
-          .from("posts")
-          .select(`*`)
-          .range(window.appState.page * window.appState.limit, window.appState.page * window.appState.limit + window.appState.limit - 1)
-          .order("created_at", { ascending: false });
-
-        if (error) {
-          console.error('Feed error:', error);
-          container.innerHTML = `<div class="error-loading-post">⚠️ Using local posts. Connect for full experience.</div>`;
-          return;
-        }
-
-        if (reset) container.innerHTML = "";
-
-        if (!data || data.length === 0) {
-          if (window.appState.page === 0) {
-            container.innerHTML += `<p class="text-center py-10 text-gray-400">No posts yet. Be the first to share!</p>`;
-          }
-          return;
-        }
-
-        container.innerHTML += data.map(renderPost).join("");
-        window.appState.page++;
-      } catch (error) {
-        console.error('Load feed error:', error);
-      }
     }
 
-    function renderPost(p) {
-      const isOwn = p.user_id === window.appState.userSession.id;
-      const deleteBtn = isOwn ? `<button class="post-delete-btn" onclick="deletePostConfirm('${p.id}')" title="Delete post">🗑️</button>` : '';
-      
-      return `
-        <div class="post-entry" id="post-${p.id}">
-          ${deleteBtn}
-          <div class="album-art-container">
-            <img src="${p.music_cover || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22%3E%3Crect fill=%23f0f0f0%22 width=%22100%25%22 height=%22100%25%22/%3E%3C/svg%3E'}" alt="Album cover" class="w-full h-full object-cover" loading="lazy">
-          </div>
-
-          <h3 class="text-lg font-bold truncate">${p.music_title || 'Unknown Title'}</h3>
-          <p class="text-sm text-gray-500 mb-3">${p.caption || 'No caption'}</p>
-
-          <div class="flex gap-6 text-sm mt-3">
-            <button onclick="protectedAction(() => toggleLike('${p.id}'))" class="hover:opacity-70 transition" aria-label="Like post">
-              ❤️ <span id="likes-${p.id}">0</span>
-            </button>
-
-            <button onclick="protectedAction(() => openComment('${p.id}'))" class="hover:opacity-70 transition" aria-label="Comment on post">
-              💬 <span id="comments-${p.id}">0</span>
-            </button>
-
-            <button onclick="sharePost('${p.id}')" class="hover:opacity-70 transition" aria-label="Share post">
-              🔗
-            </button>
-          </div>
-        </div>
-      `;
-    }
-
-    window.toggleLike = async function(postId) {
-      try {
-        showToast('❤️ Liked!', 'success');
-        // Increment local counter
-        const elem = document.getElementById(`likes-${postId}`);
-        if (elem) elem.textContent = (parseInt(elem.textContent) || 0) + 1;
-      } catch (error) {
-        console.error('Like error:', error);
-      }
-    };
-
-    window.deletePostConfirm = function(postId) {
-      showConfirm('Delete Post?', 'This action cannot be undone.', () => {
-        deletePost(postId);
-      });
-    };
-
-    window.deletePost = async function(postId) {
-      try {
-        const { error } = await supabase
-          .from("posts")
-          .delete()
-          .eq("id", postId);
-
-        if (error) throw error;
-
-        document.getElementById(`post-${postId}`)?.remove();
-        showToast('Post deleted', 'success');
-        loadUserArchive();
-      } catch (error) {
-        console.error('Delete error:', error);
-        showToast('Failed to delete post', 'error');
-      }
-    };
-
-    window.openComment = function(postId) {
-      const text = prompt("Write comment:");
-      if (!text) return;
-      showToast('💬 Comment added!', 'success');
-    };
-
-    window.sharePost = function(id) {
-      try {
-        const link = location.origin + "?post=" + id;
-        navigator.clipboard.writeText(link);
-        showToast("🔗 Link copied!", "success");
-      } catch (error) {
-        showToast('Failed to copy link', 'error');
-      }
-    };
-
-    // ============ PROFILE ============
-    function loadUserProfile() {
-      if (window.appState.myProfileData) {
-        updateProfileUI(window.appState.myProfileData);
-        loadUserArchive();
-      }
-    }
-
-    function updateProfileUI(data) {
-      const pfpImg = data.pfp;
-      
-      // Header
-      if (pfpImg) {
-        document.getElementById('header-pfp').classList.remove('hidden');
-        document.getElementById('header-pfp').src = pfpImg;
-        document.getElementById('header-pfp-initial').classList.add('hidden');
-      } else {
-        document.getElementById('header-pfp').classList.add('hidden');
-        document.getElementById('header-pfp-initial').classList.remove('hidden');
-      }
-      
-      document.getElementById('header-name').textContent = data.name || 'User';
-      document.getElementById('header-username').textContent = '@' + (data.username || 'user');
-
-      // Layer
-      if (pfpImg) {
-        document.getElementById('layer-pfp').classList.remove('hidden');
-        document.getElementById('layer-pfp').src = pfpImg;
-        document.getElementById('layer-pfp-initial').classList.add('hidden');
-      } else {
-        document.getElementById('layer-pfp').classList.add('hidden');
-        document.getElementById('layer-pfp-initial').classList.remove('hidden');
-      }
-      
-      document.getElementById('layer-name').textContent = data.name || 'User';
-      document.getElementById('layer-bio').textContent = data.bio || 'Searching for meaning in melodies.';
-
-      // Mini PFP
-      if (pfpImg) {
-        document.getElementById('pfp-mini').classList.remove('hidden');
-        document.getElementById('pfp-mini').src = pfpImg;
-        document.getElementById('pfp-initial').classList.add('hidden');
-      } else {
-        document.getElementById('pfp-mini').classList.add('hidden');
-        document.getElementById('pfp-initial').classList.remove('hidden');
-      }
-
-      // Edit form
-      document.getElementById('edit-name').value = data.name || '';
-      document.getElementById('edit-username').value = data.username || '';
-      document.getElementById('edit-bio').value = data.bio || '';
-
-      // Privacy toggle
-      document.getElementById('privacy-toggle').checked = data.private || false;
-    }
-
-    async function loadUserArchive() {
-      if (window.appState.isGuest) return;
-      
-      try {
-        const { data } = await supabase
-          .from("posts")
-          .select("*")
-          .eq("user_id", window.appState.userSession.id)
-          .order("created_at", { ascending: false });
-
-        const container = document.getElementById('mine-feed');
-        container.innerHTML = '';
-
-        if (!data || data.length === 0) {
-          container.innerHTML = '<p class="text-center py-10 text-gray-400">No posts yet. Create one to get started!</p>';
-          document.getElementById('stat-count-posts').textContent = '0';
-          return;
-        }
-
-        container.innerHTML = data.map(renderPost).join("");
-        document.getElementById('stat-count-posts').textContent = data.length;
-      } catch (error) {
-        console.error('Archive error:', error);
-      }
-    }
-
-    window.openProfileLayer = function() {
-  document.getElementById('profile-layer').style.display = 'flex';
-};
-
-    // ============ MODALS ============
-    window.openModal = function(modalId) {
-  const el = document.getElementById(modalId);
-  if (!el) return;
-
-  el.classList.add('active');
-  el.style.display = 'flex';
-};
-
-    window.closeModal = function(modalId) {
-  const el = document.getElementById(modalId);
-  if (!el) return;
-
-  el.classList.remove('active');
-  el.style.display = 'none';
-};
-
-    window.openLayer = function(layerId) {
-      document.getElementById(layerId)?.style.display = 'flex';
-    };
-
-    window.closeLayer = function(layerId) {
-      document.getElementById(layerId).style.display = 'none';
-    };
-
-    window.protectedAction = function(callback) {
-  if (window.appState.isGuest) {
-    openModal('modal-auth');
-    return;
-  }
-  callback();
-};
-
-    // ============ PROFILE EDITS ============
-    document.getElementById('edit-pfp')?.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          const preview = document.getElementById('edit-pfp-preview');
-          document.getElementById('edit-pfp-img').src = evt.target.result;
-          preview.classList.remove('hidden');
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    document.getElementById('auth-pfp')?.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          const preview = document.getElementById('auth-pfp-preview');
-          document.getElementById('auth-pfp-img').src = evt.target.result;
-          preview.classList.remove('hidden');
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    window.saveProfileEdits = async function() {
-      const name = document.getElementById('edit-name').value.trim();
-      const bio = document.getElementById('edit-bio').value.trim();
-      const pfpFile = document.getElementById('edit-pfp').files[0];
-
-      if (!name) {
-        showToast('Name is required', 'error');
-        return;
-      }
-
-      try {
-        let pfpUrl = window.appState.myProfileData.pfp;
-        if (pfpFile) {
-          const reader = new FileReader();
-          pfpUrl = await new Promise((resolve) => {
-            reader.onload = (e) => resolve(e.target.result);
-            reader.readAsDataURL(pfpFile);
-          });
-        }
-
-        const updated = {
-          ...window.appState.myProfileData,
-          name,
-          bio,
-          pfp: pfpUrl
-        };
-
-        localStorage.setItem('auth:userData', JSON.stringify(updated));
-        window.appState.myProfileData = updated;
-        updateProfileUI(updated);
-        closeModal('modal-edit-profile');
-        showToast('Profile updated!', 'success');
-      } catch (error) {
-        console.error('Edit error:', error);
-        showToast('Failed to update profile', 'error');
-      }
-    };
-
-    window.validateUsername = function(username) {
-      const msg = document.getElementById('user-status-msg');
-      const btn = document.getElementById('auth-submit');
-      const name = document.getElementById('auth-name').value.trim();
-
-      if (username.length < 3) {
-        msg.textContent = '❌ Too short';
-        msg.style.color = '#ef4444';
-        btn.disabled = true;
-        btn.style.opacity = '0.5';
-        return;
-      }
-
-      if (!/^[a-z0-9_]+$/.test(username)) {
-        msg.textContent = '❌ Invalid chars';
-        msg.style.color = '#ef4444';
-        btn.disabled = true;
-        btn.style.opacity = '0.5';
-        return;
-      }
-
-      msg.textContent = '✅ Available';
-      msg.style.color = '#10b981';
-      btn.disabled = !(name && username.length >= 3);
-      btn.style.opacity = btn.disabled ? '0.5' : '1';
-    };
-
-    // ============ MUSIC SEARCH ============
-    let searchTimeout;
-    window.debounceSearch = function(query) {
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => searchMusicEngine(query), 300);
-    };
-
-    window.searchMusicEngine = async function(query) {
-      if (!query || query.length < 2) {
-        document.getElementById('itunes-results').classList.add('hidden');
-        return;
-      }
-
-      const loader = document.getElementById('itunes-loader');
-      const results = document.getElementById('itunes-results');
-
-      loader.classList.remove('hidden');
-      results.classList.add('hidden');
-
-      try {
-        const response = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=8`);
-        const data = await response.json();
-
-        loader.classList.add('hidden');
-
-        if (data.results.length === 0) {
-          results.innerHTML = '<div class="p-4 text-center text-gray-400">No songs found</div>';
-          results.classList.remove('hidden');
-          return;
-        }
-
-        results.innerHTML = data.results.map(song => `
-          <div class="p-3 border-b cursor-pointer hover:bg-white transition flex items-center gap-3" onclick="selectMusic('${song.trackId}', '${song.trackName.replace(/'/g, "\\'")}', '${song.artistName.replace(/'/g, "\\'")}', '${song.artworkUrl100.replace(/'/g, "\\'")}')">
-            <img src="${song.artworkUrl100}" class="w-12 h-12 rounded" alt="">
-            <div class="flex-1 overflow-hidden">
-              <p class="text-sm font-bold truncate">${song.trackName}</p>
-              <p class="text-xs text-gray-400 truncate">${song.artistName}</p>
+    resultsContainer.innerHTML = filteredUsers.map(u => `
+        <div onclick="navigateTo('profile', '${u.username}')" class="flex items-center justify-between p-6 bg-gray-50 dark:bg-white/5 rounded-[2rem] border border-black/5 dark:border-white/5 group">
+            <div class="flex items-center gap-4">
+                <img src="${u.pfp}" class="w-12 h-12 rounded-2xl object-cover">
+                <span class="text-[13px] font-bold">${u.name}</span>
             </div>
-          </div>
-        `).join('');
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+        </div>
+    `).join('');
+}
 
-        results.classList.remove('hidden');
-      } catch (error) {
-        console.error('Search error:', error);
-        loader.classList.add('hidden');
-      }
-    };
+// --- BOOT SEQUENCE (System Initialization) ---
 
-    window.selectMusic = function(id, name, artist, cover) {
-      window.appState.selectedMusic = { id, name, artist, cover };
-      document.getElementById('sel-name').textContent = name;
-      document.getElementById('sel-artist').textContent = artist;
-      document.getElementById('sel-art').src = cover;
-      document.getElementById('selection-preview').classList.remove('hidden');
-      document.getElementById('itunes-results').classList.add('hidden');
-      document.getElementById('itunes-search').value = '';
-    };
-
-    window.clearMusicSelection = function() {
-      window.appState.selectedMusic = null;
-      document.getElementById('selection-preview').classList.add('hidden');
-    };
-
-    // ============ POST CREATION ============
-    window.processPublish = async function() {
-      if (!window.appState.selectedMusic) {
-        showToast('Please select a song', 'error');
-        return;
-      }
-
-      const caption = document.getElementById('post-caption').value.trim();
-      const btn = document.getElementById('btn-publish');
-      btn.disabled = true;
-
-      try {
-        const { data, error } = await supabase.from('posts').insert({
-          user_id: window.appState.userSession.id,
-          music_title: window.appState.selectedMusic.name,
-          music_artist: window.appState.selectedMusic.artist,
-          music_cover: window.appState.selectedMusic.cover,
-          caption,
-          created_at: new Date().toISOString()
-        });
-
-        if (error) throw error;
-
-        showToast('Post archived! 🎉', 'success');
-        closeModal('modal-post');
-        loadFeed(true);
-        loadUserArchive();
-      } catch (error) {
-        console.error('Publish error:', error);
-        showToast('Failed to create post', 'error');
-      } finally {
-        btn.disabled = false;
-      }
-    };
-
-    // ============ SETTINGS ============
-    window.pendingTheme = function(color) {
-      window.appState.pendingThemeColor = color;
-      document.documentElement.style.setProperty('--accent', color);
-      showToast('Theme updated (save to keep)', 'info');
-    };
-
-    window.pendingPrivacy = function(isPrivate) {
-      window.appState.pendingPrivacyState = isPrivate;
-      showToast(`Ghost mode ${isPrivate ? 'ON' : 'OFF'} (save to keep)`, 'info');
-    };
-
-    window.saveGlobalConfig = function() {
-      const css = document.getElementById('input-css').value;
-      const customStyle = document.getElementById('user-custom-css');
-      customStyle.textContent = css;
-
-      const updated = {
-        ...window.appState.myProfileData,
-        theme: window.appState.pendingThemeColor || window.appState.myProfileData.theme,
-        private: window.appState.pendingPrivacyState !== null ? window.appState.pendingPrivacyState : window.appState.myProfileData.private,
-        customCSS: css
-      };
-
-      localStorage.setItem('auth:userData', JSON.stringify(updated));
-      localStorage.setItem('theme-color', updated.theme);
-      localStorage.setItem('custom-css', css);
-
-      window.appState.myProfileData = updated;
-      showToast('Settings synchronized! ✨', 'success');
-    };
-
-    function applyUserSettings() {
-      if (!window.appState.myProfileData) return;
-
-      const theme = window.appState.myProfileData.theme || '#ec4899';
-      const css = window.appState.myProfileData.customCSS || '';
-
-      document.documentElement.style.setProperty('--accent', theme);
-      document.getElementById('user-custom-css').textContent = css;
-
-      if (window.appState.myProfileData.customCSS) {
-        document.getElementById('input-css').value = window.appState.myProfileData.customCSS;
-      }
+function bootSystem() {
+    console.log("AMONSPATH OS KERNEL v15.0: Initializing...");
+    
+    // Check session
+    const savedUser = localStorage.getItem('amons_user');
+    if (savedUser) {
+        const userData = JSON.parse(savedUser);
+        AMONS_KERNEL.currentUser = userData;
+        applyCustomTheme(userData);
+        navigateTo('feed');
+    } else {
+        navigateTo('auth');
     }
 
-    // ============ UI HELPERS ============
-    window.toggleSearchUI = function() {
-      document.getElementById('search-overlay').classList.toggle('open');
-    };
-
-    window.toggleNotif = function() {
-      document.getElementById('notif-panel').classList.toggle('hidden');
-    };
-
-    window.routeTo = function(target) {
-      const fyp = document.getElementById('page-fyp');
-      const mine = document.getElementById('page-mine');
-      const fypBtn = document.getElementById('tab-btn-fyp');
-      const mineBtn = document.getElementById('tab-btn-mine');
-
-      fyp.classList.add('hidden');
-      mine.classList.add('hidden');
-      fypBtn.setAttribute('aria-selected', 'false');
-      mineBtn.setAttribute('aria-selected', 'false');
-      fypBtn.classList.add('text-gray-300');
-      mineBtn.classList.add('text-gray-300');
-      fypBtn.classList.remove('text-pink-500', 'border-b-2', 'border-pink-500');
-      mineBtn.classList.remove('text-pink-500', 'border-b-2', 'border-pink-500');
-
-      if (target === 'fyp') {
-        fyp.classList.remove('hidden');
-        fypBtn.classList.remove('text-gray-300');
-        fypBtn.classList.add('text-pink-500', 'border-b-2', 'border-pink-500');
-        fypBtn.setAttribute('aria-selected', 'true');
-        document.getElementById('system-status').textContent = 'Live Discovery Engine';
-      } else {
-        if (window.appState.isGuest) {
-          showToast('Please create an account first', 'info');
-          routeTo('fyp');
-          return;
+    // Global Event Listeners
+    document.addEventListener('click', (e) => {
+        // Haptic feedback simulation
+        if (e.target.tagName === 'BUTTON') {
+            haptic('light');
         }
-        mine.classList.remove('hidden');
-        mineBtn.classList.remove('text-gray-300');
-        mineBtn.classList.add('text-pink-500', 'border-b-2', 'border-pink-500');
-        mineBtn.setAttribute('aria-selected', 'true');
-        document.getElementById('system-status').textContent = 'Personal Archive View';
-        loadUserArchive();
-      }
-    };
-
-    window.showToast = function(msg, type = 'default') {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      toast.className = `toast ${type}`;
-      toast.innerText = msg;
-      toast.setAttribute('role', 'status');
-      toast.setAttribute('aria-live', 'polite');
-      container.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-    };
-
-    // ============ CONFIRM DIALOG ============
-    window.showConfirm = function(title, message, callback) {
-      document.getElementById('confirm-title').textContent = title;
-      document.getElementById('confirm-message').textContent = message;
-      window.appState.confirmCallback = callback;
-      document.getElementById('modal-confirm').classList.add('active');
-    };
-
-    window.closeConfirm = function() {
-      document.getElementById('modal-confirm').classList.remove('active');
-      window.appState.confirmCallback = null;
-    };
-
-    window.executeConfirm = function() {
-      if (window.appState.confirmCallback) {
-        window.appState.confirmCallback();
-      }
-      closeConfirm();
-    };
-
-    // Scroll loading
-    window.addEventListener("scroll", () => {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
-        if (document.getElementById('page-fyp').classList.contains('hidden') === false) {
-          loadFeed();
-        }
-      }
     });
-        
-    </script>
+}
 
-</body>
-</html>
+// Global Haptic Helper
+function haptic(intensity) {
+    if (window.navigator.vibrate) {
+        const ms = intensity === 'heavy' ? 50 : intensity === 'medium' ? 20 : 10;
+        window.navigator.vibrate(ms);
+    }
+}
+
+bootSystem();
+
+// --- ENHANCED MUSIC LIBRARY (Data Extension) ---
+
+const VIRTUAL_LIBRARY = [
+    { 
+        id: 'v1', 
+        name: 'Vignette', 
+        artist: 'Archiver', 
+        artwork: 'https://picsum.photos/seed/archive1/600', 
+        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        source: 'spotify',
+        genre: 'Ambient'
+    },
+    { 
+        id: 'v2', 
+        name: 'Afterthought', 
+        artist: 'Zain', 
+        artwork: 'https://picsum.photos/seed/archive2/600', 
+        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+        source: 'local',
+        genre: 'Experimental'
+    },
+    { 
+        id: 'v3', 
+        name: 'Neon Static', 
+        artist: 'Signal Flow', 
+        artwork: 'https://picsum.photos/seed/archive3/600', 
+        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',
+        source: 'youtube',
+        genre: 'Synthwave'
+    },
+    { 
+        id: 'v4', 
+        name: 'Midnight Protocol', 
+        artist: 'Kernel Ghost', 
+        artwork: 'https://picsum.photos/seed/archive4/600', 
+        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3',
+        source: 'spotify',
+        genre: 'Cyberpunk'
+    },
+    { 
+        id: 'v5', 
+        name: 'Soft Reset', 
+        artist: 'Lofi Arch', 
+        artwork: 'https://picsum.photos/seed/archive5/600', 
+        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+        source: 'apple',
+        genre: 'Lofi'
+    }
+];
+
+// --- SEARCH & FILTER MUSIC LOGIC ---
+
+function renderMusicDiscovery(filterGenre = 'All') {
+    const container = document.getElementById('search-results');
+    const filtered = filterGenre === 'All' 
+        ? VIRTUAL_LIBRARY 
+        : VIRTUAL_LIBRARY.filter(t => t.genre === filterGenre);
+
+    container.innerHTML = `
+        <div class="flex gap-4 mb-10 overflow-x-auto no-scrollbar pb-2">
+            ${['All', 'Ambient', 'Synthwave', 'Lofi', 'Cyberpunk'].map(g => `
+                <button onclick="renderMusicDiscovery('${g}')" 
+                        class="px-6 py-2 rounded-full border ${filterGenre === g ? 'bg-pink-500 border-pink-500 text-white' : 'border-white/10 text-gray-400'} text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all">
+                    ${g}
+                </button>
+            `).join('')}
+        </div>
+        <div class="grid grid-cols-1 gap-4">
+            ${filtered.map(track => `
+                <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-white/5 rounded-3xl group hover:bg-white/10 transition-all">
+                    <div class="flex items-center gap-4">
+                        <div class="relative w-14 h-14 overflow-hidden rounded-2xl">
+                            <img src="${track.artwork}" class="w-full h-full object-cover">
+                            <button onclick="playTrack(${JSON.stringify(track).replace(/"/g, '&quot;')})" 
+                                    class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </button>
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm tracking-tight">${track.name}</p>
+                            <p class="text-[9px] text-gray-500 uppercase font-black tracking-widest">${track.artist} • ${track.source}</p>
+                        </div>
+                    </div>
+                    <button class="p-3 text-gray-400 hover:text-pink-500">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    </button>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+// Tambahkan listener untuk input pencarian musik jika diperlukan
+
+// --- EXTENDED TRACK DATA (Arsip Musik v15.0) ---
+
+const MASTER_ARCHIVE = [
+    { id: 't1', name: 'Vignette', artist: 'Archiver', artwork: 'https://picsum.photos/seed/arch1/400', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', source: 'spotify', genre: 'Ambient' },
+    { id: 't2', name: 'Afterthought', artist: 'Zain', artwork: 'https://picsum.photos/seed/arch2/400', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', source: 'local', genre: 'Experimental' },
+    { id: 't3', name: 'Neon Static', artist: 'Signal Flow', artwork: 'https://picsum.photos/seed/arch3/400', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', source: 'youtube', genre: 'Synthwave' },
+    { id: 't4', name: 'Midnight Protocol', artist: 'Kernel Ghost', artwork: 'https://picsum.photos/seed/arch4/400', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', source: 'spotify', genre: 'Cyberpunk' },
+    { id: 't5', name: 'Soft Reset', artist: 'Lofi Arch', artwork: 'https://picsum.photos/seed/arch5/400', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3', source: 'apple', genre: 'Lofi' },
+    { id: 't6', name: 'Ether', artist: 'Zain', artwork: 'https://picsum.photos/seed/arch6/400', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3', source: 'local', genre: 'Ambient' },
+    { id: 't7', name: 'Rhythm of Noise', artist: 'V.V', artwork: 'https://picsum.photos/seed/arch7/400', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3', source: 'itunes', genre: 'Experimental' }
+];
+
+// --- PLAYLIST LOGIC ---
+
+let myPlaylists = {
+    'Late Night': ['t1', 't4', 't6'],
+    'Work Mode': ['t3', 't5']
+};
+
+function renderMusicSection(tab = 'library') {
+    const container = document.getElementById('search-results'); // Gunakan container search untuk demo
+    
+    let html = `
+        <div class="flex gap-8 mb-12 border-b border-white/5 pb-4">
+            <button onclick="renderMusicSection('library')" class="text-[10px] font-black uppercase tracking-[0.3em] ${tab === 'library' ? 'text-pink-500' : 'text-gray-500'}">Library</button>
+            <button onclick="renderMusicSection('playlists')" class="text-[10px] font-black uppercase tracking-[0.3em] ${tab === 'playlists' ? 'text-pink-500' : 'text-gray-500'}">Playlists</button>
+        </div>
+    `;
+
+    if (tab === 'library') {
+        html += renderTrackList(MASTER_ARCHIVE);
+    } else {
+        html += renderPlaylistCards();
+    }
+
+    container.innerHTML = html;
+}
+
+function renderTrackList(tracks) {
+    return `
+        <div class="grid grid-cols-1 gap-4">
+            ${tracks.map(track => `
+                <div class="group flex items-center justify-between p-5 bg-gray-50 dark:bg-white/5 rounded-[2rem] border border-transparent hover:border-pink-500/30 transition-all">
+                    <div class="flex items-center gap-5">
+                        <div class="relative w-16 h-16 rounded-2xl overflow-hidden shadow-lg">
+                            <img src="${track.artwork}" class="w-full h-full object-cover">
+                            <button onclick='playTrack(${JSON.stringify(track)})' class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </button>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-sm tracking-tight">${track.name}</h4>
+                            <p class="text-[9px] text-gray-400 font-black uppercase tracking-widest mt-1">${track.artist} • ${track.genre}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="text-[8px] font-bold text-gray-500 uppercase tracking-tighter bg-white/5 px-3 py-1 rounded-full">${track.source}</span>
+                        <button class="text-gray-400 hover:text-pink-500 transition-colors">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function renderPlaylistCards() {
+    return `
+        <div class="grid grid-cols-2 gap-6">
+            ${Object.keys(myPlaylists).map(name => {
+                const firstTrack = MASTER_ARCHIVE.find(t => t.id === myPlaylists[name][0]);
+                return `
+                    <div class="relative aspect-square rounded-[2.5rem] overflow-hidden group cursor-pointer shadow-huge">
+                        <img src="${firstTrack.artwork}" class="w-full h-full object-cover grayscale-[50%] group-hover:grayscale-0 transition-all duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent p-6 flex flex-col justify-end">
+                            <p class="text-[10px] font-black text-pink-500 uppercase tracking-[0.3em] mb-1">Archive</p>
+                            <h3 class="text-white font-serif-italic text-2xl tracking-tighter">${name}.</h3>
+                            <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-2">${myPlaylists[name].length} Tracks</p>
+                        </div>
+                    </div>
+                `;
+            }).join('')}
+            <div class="aspect-square rounded-[2.5rem] border-2 border-dashed border-white/10 flex flex-col items-center justify-center gap-4 hover:border-pink-500/50 transition-colors cursor-pointer">
+                <div class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <span class="text-[9px] font-black uppercase tracking-widest text-gray-500">New Path</span>
+            </div>
+        </div>
+    `;
+}
+
+// --- VISUALIZER LOGIC (UI Placeholder) ---
+
+function updateVisualizer() {
+    if (!AMONS_KERNEL.isPlaying) return;
+    
+    // Secara teknis ini akan menggunakan Web Audio API, 
+    // tapi untuk versi kernel ini kita gunakan animasi CSS haptic
+    const bars = document.querySelectorAll('.visualizer-bar');
+    bars.forEach(bar => {
+        const height = Math.random() * 100;
+        bar.style.height = `${height}%`;
+    });
+    
+    requestAnimationFrame(updateVisualizer);
+}
+
+// --- CHAT SYSTEM (Chat.tsx Logic) ---
+
+const MOCK_MESSAGES = [
+    { id: 'm1', senderId: 'zain', text: 'Identity stabilized in the archive.', timestamp: '10:00' },
+    { id: 'm2', senderId: 'adnan', text: 'Copy that. Frequency feels right.', timestamp: '10:02' }
+];
+
+function renderChat(targetUsername) {
+    const chatContainer = document.getElementById('chat-window');
+    const targetUser = AMONS_KERNEL.users.find(u => u.username === targetUsername);
+    
+    if (!targetUser) return;
+
+    // Apply specific chat wallpaper from user settings
+    const wallpaper = AMONS_KERNEL.currentUser?.chatWallpapers?.[targetUsername] || 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80';
+    
+    chatContainer.style.backgroundImage = `url(${wallpaper})`;
+    chatContainer.innerHTML = `
+        <div class="flex flex-col h-full bg-black/40 backdrop-blur-sm p-6">
+            <header class="flex items-center gap-4 mb-8">
+                <button onclick="navigateTo('chat-list')" class="p-2 bg-white/10 rounded-full text-white">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <img src="${targetUser.pfp}" class="w-10 h-10 rounded-2xl object-cover">
+                <span class="font-bold text-white text-sm">${targetUser.name}</span>
+            </header>
+
+            <div class="flex-1 overflow-y-auto space-y-4 no-scrollbar">
+                ${MOCK_MESSAGES.map(msg => `
+                    <div class="flex ${msg.senderId === 'zain' ? 'justify-end' : 'justify-start'}">
+                        <div class="${msg.senderId === 'zain' ? 'bg-pink-500 text-white' : 'bg-white/10 text-white'} p-4 rounded-[1.5rem] max-w-[80%] shadow-xl">
+                            <p class="text-sm">${msg.text}</p>
+                            <span class="text-[8px] opacity-50 uppercase mt-2 block font-black">${msg.timestamp}</span>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+
+            <footer class="mt-6 relative">
+                <input type="text" placeholder="Add to the echo..." 
+                       class="w-full bg-white/10 border-none rounded-3xl py-5 pl-8 pr-16 text-white text-sm outline-none focus:ring-2 focus:ring-pink-500/50 transition-all">
+                <button class="absolute right-3 top-1/2 -translate-y-1/2 p-3 bg-pink-500 text-white rounded-2xl">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                </button>
+            </footer>
+        </div>
+    `;
+}
+
+// --- PROFILE CUSTOMIZATION (Identity Persistence) ---
+
+function renderUserProfile(username) {
+    const profileUser = AMONS_KERNEL.users.find(u => u.username === username);
+    const container = document.getElementById('main-content');
+
+    if (!profileUser) return;
+
+    // INJECT CUSTOM CSS (Fitur Utama Zain)
+    if (profileUser.customCSS) {
+        const styleId = `css-${profileUser.username}`;
+        if (!document.getElementById(styleId)) {
+            const style = document.createElement('style');
+            style.id = styleId;
+            style.innerHTML = profileUser.customCSS;
+            document.head.appendChild(style);
+        }
+    }
+
+    container.innerHTML = `
+        <div class="animate-fade-in">
+            <div class="relative h-64 w-full rounded-[3rem] overflow-hidden mb-[-4rem] z-0">
+                <img src="${profileUser.headerImage}" class="w-full h-full object-cover grayscale-[30%]">
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/60"></div>
+            </div>
+
+            <div class="px-6 z-10 relative">
+                <div class="flex items-end justify-between mb-8">
+                    <img src="${profileUser.pfp}" class="w-32 h-32 rounded-[2.5rem] border-8 border-white dark:border-[#0f0f0f] shadow-huge object-cover">
+                    <button class="mb-2 px-8 py-3 bg-pink-500 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-pink-500/20">Follow Path</button>
+                </div>
+
+                <h1 class="font-serif-italic text-5xl tracking-tighter">${profileUser.name}.</h1>
+                <p class="text-gray-400 text-sm mt-4 max-w-md leading-relaxed">${profileUser.bio}</p>
+
+                <div class="grid grid-cols-3 gap-4 mt-10 border-y border-black/5 dark:border-white/5 py-8">
+                    <div class="text-center">
+                        <span class="block font-black text-xl">12</span>
+                        <span class="text-[9px] text-gray-400 uppercase tracking-[0.2em]">Archives</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="block font-black text-xl">${profileUser.followers.length}</span>
+                        <span class="text-[9px] text-gray-400 uppercase tracking-[0.2em]">Observers</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="block font-black text-xl">${profileUser.following.length}</span>
+                        <span class="text-[9px] text-gray-400 uppercase tracking-[0.2em]">Following</span>
+                    </div>
+                </div>
+
+                <div class="mt-12 space-y-8" id="profile-tabs-content">
+                    <p class="text-center text-[11px] font-bold uppercase tracking-[0.5em] text-gray-300 py-20">No archived frequency found</p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// --- FINAL APP INITIALIZATION ---
+
+function initializeKernel() {
+    // 1. Setup Navigation
+    const navItems = document.querySelectorAll('.nav-link');
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            const path = e.currentTarget.dataset.path;
+            navigateTo(path);
+        });
+    });
+
+    // 2. Start Global Player background visualizer
+    setInterval(() => {
+        if (AMONS_KERNEL.isPlaying) {
+            // Animasi bar kecil di navbar atau player
+        }
+    }, 100);
+
+    console.log("AMONSPATH OS KERNEL v15.0: All Modules Loaded Successfully.");
+}
+
+// Jalankan sistem
+initializeKernel();
+
+// --- DATABASE SYNC LOGIC ---
+
+const AMONS_STORAGE_KEY = 'AMONSPATH_DATA_V15';
+
+// Fungsi untuk menyimpan seluruh state kernel ke storage
+function persistSystemState() {
+    const stateToSave = {
+        currentUser: AMONS_KERNEL.currentUser,
+        users: AMONS_KERNEL.users,
+        posts: AMONS_KERNEL.posts,
+        lastSync: new Date().toISOString()
+    };
+    localStorage.setItem(AMONS_STORAGE_KEY, JSON.stringify(stateToSave));
+    console.log("Kernel: State persisted to local archive.");
+}
+
+// Fungsi untuk memuat data saat startup
+function loadSystemState() {
+    const savedData = localStorage.getItem(AMONS_STORAGE_KEY);
+    if (savedData) {
+        const parsed = JSON.parse(savedData);
+        AMONS_KERNEL.users = parsed.users;
+        AMONS_KERNEL.posts = parsed.posts;
+        AMONS_KERNEL.currentUser = parsed.currentUser;
+        return true;
+    }
+    return false;
+}
+
+// --- IDENTITY PERSISTENCE (Update Profile Logic) ---
+
+function updateIdentity(newData) {
+    if (!AMONS_KERNEL.currentUser) return;
+
+    // Update current user state
+    AMONS_KERNEL.currentUser = { ...AMONS_KERNEL.currentUser, ...newData };
+
+    // Update in global users list
+    const userIndex = AMONS_KERNEL.users.findIndex(u => u.id === AMONS_KERNEL.currentUser.id);
+    if (userIndex !== -1) {
+        AMONS_KERNEL.users[userIndex] = AMONS_KERNEL.currentUser;
+    }
+
+    // Re-apply visual changes
+    applyCustomTheme(AMONS_KERNEL.currentUser);
+    
+    // Save to storage
+    persistSystemState();
+    
+    console.log("Identity Stabilized: Changes applied successfully.");
+}
+
+// --- POSTING ENGINE (Adding new echoes) ---
+
+function createNewEcho(content, type = 'notes', musicData = null) {
+    const newPost = {
+        id: `p_${Date.now()}`,
+        userId: AMONS_KERNEL.currentUser.id,
+        user: {
+            name: AMONS_KERNEL.currentUser.name,
+            username: AMONS_KERNEL.currentUser.username,
+            pfp: AMONS_KERNEL.currentUser.pfp
+        },
+        type: type,
+        music: musicData,
+        caption: content,
+        timestamp: new Date().toISOString(),
+        likes: [],
+        comments: []
+    };
+
+    AMONS_KERNEL.posts.unshift(newPost); // Tambah ke paling atas
+    persistSystemState();
+    navigateTo('feed');
+    
+    // Trigger visual feedback
+    haptic('heavy');
+}
+
+// --- INITIALIZE SYSTEM ---
+
+document.addEventListener('DOMContentLoaded', () => {
+    const hasData = loadSystemState();
+    
+    if (!hasData) {
+        console.log("Kernel: No previous archive found. Initializing default state.");
+        persistSystemState();
+    }
+    
+    bootSystem(); // Memanggil fungsi boot dari Bagian 4
+});
+
+// --- GLOBAL OVERLAY MANAGER ---
+
+function renderGlobalPlayer() {
+    const playerContainer = document.getElementById('global-player-overlay');
+    const track = AMONS_KERNEL.currentTrack;
+
+    if (!track) {
+        playerContainer.classList.add('translate-y-40', 'opacity-0');
+        return;
+    }
+
+    playerContainer.classList.remove('translate-y-40', 'opacity-0');
+    playerContainer.innerHTML = `
+        <div class="fixed bottom-[100px] left-4 right-4 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-[2.5rem] p-4 flex items-center justify-between shadow-huge overflow-hidden animate-slide-up">
+            <div class="flex items-center gap-4 flex-1 min-w-0">
+                <div class="w-12 h-12 rounded-2xl overflow-hidden shadow-lg flex-shrink-0 animate-pulse-slow">
+                    <img src="${track.artwork}" class="w-full h-full object-cover">
+                </div>
+                <div class="flex flex-col min-w-0">
+                    <span class="text-[11px] font-bold tracking-tight truncate">${track.name}</span>
+                    <span class="text-[9px] text-gray-400 uppercase tracking-widest truncate">${track.artist}</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button onclick="togglePlay()" class="w-10 h-10 flex items-center justify-center bg-pink-500 text-white rounded-full shadow-lg shadow-pink-500/20 hover:scale-105 active:scale-95 transition-transform">
+                    ${AMONS_KERNEL.isPlaying ? 
+                        '<svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>' : 
+                        '<svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>'}
+                </button>
+                <button onclick="stopTrack()" class="w-10 h-10 flex items-center justify-center bg-gray-50 dark:bg-[#1a1a1a] text-gray-400 rounded-full">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>
+                </button>
+            </div>
+            
+            <div class="absolute bottom-0 left-0 right-0 h-1 flex gap-1 px-4">
+                ${Array(20).fill(0).map(() => `<div class="visualizer-bar flex-1 bg-pink-500/30 transition-all duration-300"></div>`).join('')}
+            </div>
+        </div>
+    `;
+}
+
+// --- SYSTEM FEEDBACK (Haptics & Sound Effects) ---
+
+const SYSTEM_SFX = {
+    boot: 'https://assets.mixkit.co/sfx/preview/mixkit-digital-quick-tone-2121.mp3',
+    notif: 'https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3'
+};
+
+function playSystemSound(type) {
+    const audio = new Audio(SYSTEM_SFX[type]);
+    audio.volume = 0.2;
+    audio.play().catch(() => {}); // Autoplay policy protection
+}
+
+// --- THE "ZAIN" EASTER EGG (Kernel Command) ---
+
+window.amonsCommand = function(cmd) {
+    if (cmd === 'stabilize') {
+        document.body.style.filter = 'contrast(1.1) brightness(1.1)';
+        playSystemSound('boot');
+        console.log("Kernel: Frequency Stabilized.");
+    }
+};
+
+// --- WRAP UP INITIALIZATION ---
+
+function finalizeSystem() {
+    renderGlobalPlayer();
+    
+    // Listen to changes in the kernel state
+    setInterval(() => {
+        if (AMONS_KERNEL.isPlaying) {
+            const bars = document.querySelectorAll('.visualizer-bar');
+            bars.forEach(bar => {
+                bar.style.height = `${Math.random() * 100}%`;
+            });
+        }
+    }, 150);
+}
+
+finalizeSystem();
+
+    <div id="amons-root" class="min-h-screen bg-white dark:bg-[#0f0f0f] text-black dark:text-white transition-colors duration-500">
+    
+    <div class="fixed top-0 left-0 right-0 h-1 z-[100] bg-pink-500/20">
+        <div id="system-load-bar" class="h-full bg-pink-500 w-0 transition-all duration-1000"></div>
+    </div>
+
+    <main id="main-content" class="max-w-xl mx-auto px-6 pt-20 pb-40">
+        </main>
+
+    <div id="global-player-overlay"></div>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-black/80 backdrop-blur-xl border-t border-black/5 dark:border-white/5 z-40 px-6 pb-8">
+        <div class="max-w-xl mx-auto h-20 flex items-center justify-between">
+            <button onclick="navigateTo('feed')" class="nav-link flex flex-col items-center gap-1 text-gray-400 hover:text-pink-500 transition-all">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
+                <span class="text-[8px] font-black uppercase tracking-widest">Archives</span>
+            </button>
+            <button onclick="navigateTo('search')" class="nav-link flex flex-col items-center gap-1 text-gray-400 hover:text-pink-500">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                <span class="text-[8px] font-black uppercase tracking-widest">Search</span>
+            </button>
+            <button onclick="navigateTo('chat')" class="nav-link flex flex-col items-center gap-1 text-gray-400 hover:text-pink-500">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 11-7.6-11.7 8.38 8.38 0 013.8.9L21 3z"/></svg>
+                <span class="text-[8px] font-black uppercase tracking-widest">Chat</span>
+            </button>
+            <button onclick="renderUserProfile('zain')" class="nav-link flex flex-col items-center gap-1 text-gray-400 hover:text-pink-500">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span class="text-[8px] font-black uppercase tracking-widest">Identity</span>
+            </button>
+        </div>
+    </nav>
+
+    <div id="modal-root"></div>
+</div>
+
+<script>
+// --- FINAL BOOT SEQUENCE ---
+
+function bootSystem() {
+    console.log("Starting AmonsPath Bootloader...");
+    
+    // Simulate system loading
+    const loadBar = document.getElementById('system-load-bar');
+    loadBar.style.width = '100%';
+    
+    setTimeout(() => {
+        // Load default view
+        navigateTo('feed');
+        
+        // Initial feedback
+        playSystemSound('boot');
+        
+        // Hide load bar after finish
+        setTimeout(() => loadBar.style.opacity = '0', 500);
+    }, 1000);
+}
+
+// Global initialization
+window.onload = bootSystem;
+
+/**
+ * AMONSPATH OS KERNEL v15.0 - ARCHIVE COMPLETION
+ * Status: STABLE | Identity: VERIFIED | Frequency: SYNCHRONIZED
+ * -------------------------------------------------------------
+ * Designed for the digital observers and architects.
+ */
+
+const AMONS_FINALIZER = {
+    version: "15.0.0-FINAL",
+    buildDate: new Date().toISOString(),
+    engine: "AmonsPath Vanilla-Core",
+    architect: "Zain (Engineering Lead)",
+    
+    lockAndSeal: function() {
+        // 1. Memastikan semua state tersimpan sebelum sesi ditutup
+        if (typeof persistSystemState === 'function') {
+            persistSystemState();
+        }
+
+        // 2. Memberikan pesan sambutan di Konsol (Easter Egg)
+        console.clear();
+        console.log(
+            `%c AMONSPATH OS KERNEL v15.0 %c\n%c The Sound Archive is now operational. %c`,
+            "color: #ffffff; background: #ec4899; padding: 5px 10px; font-weight: bold; border-radius: 4px;",
+            "color: initial; background: initial;",
+            "color: #ec4899; font-style: italic; font-family: serif;",
+            "color: initial; font-style: initial;"
+        );
+        
+        console.table({
+            Status: "Ready",
+            Modules: "Loaded (8/8)",
+            Memory: "Persistent",
+            Visuals: "Custom CSS Engine Active"
+        });
+
+        // 3. Efek Visual Penutup (Subtle contrast stabilization)
+        if (typeof amonsCommand === 'function') {
+            amonsCommand('stabilize');
+        }
+    }
+};
+
+// Menjalankan finalisasi sistem
+AMONS_FINALIZER.lockAndSeal();
+
+// Ekspor modul jika menggunakan sistem modul (opsional)
+// export default AMONS_FINALIZER;
